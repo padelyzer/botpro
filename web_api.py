@@ -19,7 +19,13 @@ from pathlib import Path
 # Importar nuestros módulos del sistema de trading
 try:
     from enhanced_signal_detector import EnhancedPatternDetector
-    from telegram_notifier import create_telegram_notifier
+    try:
+        from telegram_notifier import create_telegram_notifier
+        TELEGRAM_AVAILABLE = True
+    except ImportError as e:
+        logger.warning(f"Telegram notifier not available: {e}")
+        TELEGRAM_AVAILABLE = False
+        create_telegram_notifier = lambda: None
     # Crear funciones auxiliares para compatibilidad
     def get_enhanced_signals_data():
         # Datos de ejemplo con el sistema enriquecido RSI 73/28
@@ -143,11 +149,19 @@ class SignalState:
 signal_state = SignalState()
 
 # Inicializar notificador de Telegram
-telegram_notifier = create_telegram_notifier()
-if telegram_notifier:
-    logger.info("✅ Telegram notifier initialized")
+telegram_notifier = None
+if TELEGRAM_AVAILABLE:
+    try:
+        telegram_notifier = create_telegram_notifier()
+        if telegram_notifier:
+            logger.info("✅ Telegram notifier initialized")
+        else:
+            logger.warning("⚠️ Telegram notifier not configured")
+    except Exception as e:
+        logger.warning(f"⚠️ Telegram initialization failed: {e}")
+        telegram_notifier = None
 else:
-    logger.warning("⚠️ Telegram notifier not configured")
+    logger.info("ℹ️ Telegram feature not available")
 
 @app.on_event("startup")
 async def startup_event():
