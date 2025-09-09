@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import asyncio
 import json
+import random
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
 import logging
@@ -187,7 +188,9 @@ async def root():
     return {
         "system": "BotphIA Trading Signals API",
         "version": "1.0.0",
-        "status": "active",
+        "status": "online",
+        "bot_status": "running" if bot_state.get("running", False) else "stopped",
+        "signals_generated": bot_state.get("signals_count", 0),
         "features": [
             "RSI 73/28 threshold signals",
             "Dynamic R:R ratio (1.8-2.7:1)",
@@ -544,12 +547,103 @@ async def professional_dashboard():
             """,
             status_code=200
         )
+
+# =================== TRADING BOT INTEGRATION ===================
+
+# Estado global del bot
+bot_state = {
+    "running": False,
+    "task": None,
+    "last_signal": None,
+    "signals_count": 0,
+    "start_time": None
+}
+
+async def run_signal_generator():
+    """Ejecutar el generador de señales en background"""
+    try:
+        # Por ahora, simulamos señales para prueba
+        bot_state["start_time"] = datetime.now()
+        logger.info("🤖 Bot de trading iniciado (modo simulación)")
+        
+        while bot_state["running"]:
+            try:
+                # Simular generación de señal cada 60 segundos
+                await asyncio.sleep(60)
+                
+                # Señal simulada
+                signal = {
+                    "symbol": random.choice(["BTCUSDT", "ETHUSDT", "SOLUSDT"]),
+                    "signal_type": random.choice(["BUY", "SELL"]),
+                    "confidence": random.randint(60, 95),
+                    "entry_price": f"{random.uniform(30000, 70000):.2f}",
+                    "timestamp": datetime.now().isoformat()
+                }
+                
+                bot_state["last_signal"] = signal
+                bot_state["signals_count"] += 1
+                
+                logger.info(f"📊 Señal generada: {signal['symbol']} - {signal['signal_type']}")
+                
+                # Enviar a Telegram si está configurado
+                if telegram_notifier:
+                    await telegram_notifier.send_signal(signal)
+                
+            except Exception as e:
+                logger.error(f"Error en generación de señales: {e}")
+                await asyncio.sleep(30)
+                
     except Exception as e:
-        logger.error(f"Error serving professional dashboard: {e}")
-        return HTMLResponse(
-            content=f"<h1>Error</h1><p>{str(e)}</p>",
-            status_code=500
-        )
+        logger.error(f"Error fatal en bot: {e}")
+    finally:
+        bot_state["running"] = False
+        logger.info("🛑 Bot de trading detenido")
+
+@app.post("/api/bot/start")
+async def start_bot():
+    """Iniciar el bot de trading"""
+    if bot_state["running"]:
+        return {"status": "already_running", "message": "Bot already running"}
+    
+    bot_state["running"] = True
+    bot_state["task"] = asyncio.create_task(run_signal_generator())
+    
+    return {
+        "status": "started",
+        "message": "Trading bot started successfully",
+        "timestamp": datetime.now().isoformat()
+    }
+
+@app.post("/api/bot/stop")
+async def stop_bot():
+    """Detener el bot de trading"""
+    if not bot_state["running"]:
+        return {"status": "not_running", "message": "Bot is not running"}
+    
+    bot_state["running"] = False
+    if bot_state["task"]:
+        bot_state["task"].cancel()
+        
+    return {
+        "status": "stopped",
+        "message": "Trading bot stopped successfully",
+        "timestamp": datetime.now().isoformat()
+    }
+
+@app.get("/api/bot/status")
+async def bot_status():
+    """Obtener estado del bot"""
+    uptime = None
+    if bot_state["start_time"]:
+        uptime = str(datetime.now() - bot_state["start_time"])
+    
+    return {
+        "running": bot_state["running"],
+        "signals_count": bot_state["signals_count"],
+        "last_signal": bot_state["last_signal"],
+        "start_time": bot_state["start_time"].isoformat() if bot_state["start_time"] else None,
+        "uptime": uptime
+    }
 
 # =================== SERVIR ARCHIVOS ESTÁTICOS ===================
 
