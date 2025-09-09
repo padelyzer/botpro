@@ -11,7 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import asyncio
 import json
-import random
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
 import logging
@@ -20,13 +19,6 @@ from pathlib import Path
 # Importar nuestros módulos del sistema de trading
 try:
     from enhanced_signal_detector import EnhancedPatternDetector
-    try:
-        from telegram_notifier import create_telegram_notifier
-        TELEGRAM_AVAILABLE = True
-    except ImportError as e:
-        logger.warning(f"Telegram notifier not available: {e}")
-        TELEGRAM_AVAILABLE = False
-        create_telegram_notifier = lambda: None
     # Crear funciones auxiliares para compatibilidad
     def get_enhanced_signals_data():
         # Datos de ejemplo con el sistema enriquecido RSI 73/28
@@ -149,21 +141,6 @@ class SignalState:
 
 signal_state = SignalState()
 
-# Inicializar notificador de Telegram
-telegram_notifier = None
-if TELEGRAM_AVAILABLE:
-    try:
-        telegram_notifier = create_telegram_notifier()
-        if telegram_notifier:
-            logger.info("✅ Telegram notifier initialized")
-        else:
-            logger.warning("⚠️ Telegram notifier not configured")
-    except Exception as e:
-        logger.warning(f"⚠️ Telegram initialization failed: {e}")
-        telegram_notifier = None
-else:
-    logger.info("ℹ️ Telegram feature not available")
-
 @app.on_event("startup")
 async def startup_event():
     """Inicializar el sistema al arrancar"""
@@ -173,10 +150,6 @@ async def startup_event():
     # Crear directorio para archivos estáticos si no existe
     static_dir = Path("static")
     static_dir.mkdir(exist_ok=True)
-    
-    # Enviar notificación de startup a Telegram
-    if telegram_notifier:
-        await telegram_notifier.send_status_update("🚀 BotphIA Web API iniciado correctamente")
     
     logger.info("✅ Sistema iniciado correctamente")
 
@@ -188,9 +161,7 @@ async def root():
     return {
         "system": "BotphIA Trading Signals API",
         "version": "1.0.0",
-        "status": "online",
-        "bot_status": "running" if bot_state.get("running", False) else "stopped",
-        "signals_generated": bot_state.get("signals_count", 0),
+        "status": "active",
         "features": [
             "RSI 73/28 threshold signals",
             "Dynamic R:R ratio (1.8-2.7:1)",
@@ -207,11 +178,6 @@ async def root():
             "websocket": "/ws"
         }
     }
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint para Render"""
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
 @app.get("/api/signals")
 async def get_signals():
@@ -289,20 +255,6 @@ async def get_system_config():
         "last_updated": datetime.now().isoformat()
     }
 
-@app.get("/api/system/files")
-async def check_files():
-    """Verificar archivos disponibles en el sistema"""
-    import os
-    files = {
-        "current_dir": os.getcwd(),
-        "files_in_root": os.listdir("."),
-        "static_exists": os.path.exists("static"),
-        "static_files": os.listdir("static") if os.path.exists("static") else [],
-        "dashboard_exists": os.path.exists("static/dashboard.html"),
-        "pro_dashboard_exists": os.path.exists("static/professional_dashboard.html")
-    }
-    return files
-
 @app.get("/api/stats")
 async def get_system_stats():
     """Obtener estadísticas del sistema"""
@@ -327,42 +279,6 @@ async def get_system_stats():
     except Exception as e:
         logger.error(f"Error obteniendo estadísticas: {e}")
         return {"error": str(e)}
-
-# =================== TELEGRAM ENDPOINTS ===================
-
-@app.post("/api/signals/send-telegram")
-async def send_signal_to_telegram(signal_data: dict):
-    """Enviar señal específica a Telegram"""
-    if not telegram_notifier:
-        raise HTTPException(status_code=503, detail="Telegram not configured")
-    
-    try:
-        success = await telegram_notifier.send_signal(signal_data)
-        return {
-            "status": "success" if success else "failed",
-            "message": "Signal sent to Telegram" if success else "Failed to send signal",
-            "timestamp": datetime.now().isoformat()
-        }
-    except Exception as e:
-        logger.error(f"Error sending to Telegram: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/api/telegram/test")
-async def test_telegram_connection():
-    """Test conexión con Telegram"""
-    if not telegram_notifier:
-        raise HTTPException(status_code=503, detail="Telegram not configured")
-    
-    try:
-        success = await telegram_notifier.send_status_update("🧪 Test de conexión exitoso")
-        return {
-            "status": "success" if success else "failed", 
-            "message": "Test message sent" if success else "Failed to send test message",
-            "timestamp": datetime.now().isoformat()
-        }
-    except Exception as e:
-        logger.error(f"Error testing Telegram: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
 
 # =================== WEBSOCKET ===================
 
@@ -547,141 +463,12 @@ async def professional_dashboard():
             """,
             status_code=200
         )
-
-# =================== TRADING BOT INTEGRATION ===================
-
-# Estado global del bot
-bot_state = {
-    "running": False,
-    "task": None,
-    "last_signal": None,
-    "signals_count": 0,
-    "start_time": None
-}
-
-async def run_signal_generator():
-    """Ejecutar el generador de señales en background"""
-    try:
-        # Importar el generador de señales reales
-        try:
-            from simple_signal_generator import SimpleSignalGenerator
-            generator = SimpleSignalGenerator()
-            logger.info("✅ Generador de señales reales inicializado")
-        except ImportError as e:
-            logger.error(f"Error importando generador: {e}")
-            generator = None
-            
-        bot_state["start_time"] = datetime.now()
-        logger.info("🤖 Bot de trading iniciado con señales REALES")
-        
-        while bot_state["running"]:
-            try:
-                if generator:
-                    # Generar señales reales
-                    signals = await generator.generate_signals()
-                    
-                    if signals:
-                        for signal in signals:
-                            bot_state["last_signal"] = signal
-                            bot_state["signals_count"] += 1
-                            
-                            logger.info(f"📊 Señal REAL: {signal['symbol']} - {signal['signal_type']} (Confianza: {signal['confidence']}%)")
-                            
-                            # Guardar en la lista de señales actuales
-                            if "current_signals" not in bot_state:
-                                bot_state["current_signals"] = []
-                            
-                            # Mantener solo las últimas 10 señales
-                            bot_state["current_signals"].append(signal)
-                            if len(bot_state["current_signals"]) > 10:
-                                bot_state["current_signals"].pop(0)
-                            
-                            # Enviar a Telegram si está configurado
-                            if telegram_notifier and signal['confidence'] >= 70:
-                                await telegram_notifier.send_signal(signal)
-                    else:
-                        logger.info("⏳ No hay señales fuertes en este momento")
-                else:
-                    # Fallback: señal simulada si no hay generador
-                    signal = {
-                        "symbol": random.choice(["BTCUSDT", "ETHUSDT", "SOLUSDT"]),
-                        "signal_type": random.choice(["BUY", "SELL"]),
-                        "confidence": random.randint(60, 95),
-                        "entry_price": f"{random.uniform(30000, 70000):.2f}",
-                        "timestamp": datetime.now().isoformat(),
-                        "warning": "Señal simulada - Generador real no disponible"
-                    }
-                    bot_state["last_signal"] = signal
-                    bot_state["signals_count"] += 1
-                    
-                # Esperar 5 minutos antes de la siguiente verificación
-                await asyncio.sleep(300)  # 5 minutos
-                
-            except Exception as e:
-                logger.error(f"Error en generación de señales: {e}")
-                await asyncio.sleep(60)
-                
     except Exception as e:
-        logger.error(f"Error fatal en bot: {e}")
-    finally:
-        bot_state["running"] = False
-        logger.info("🛑 Bot de trading detenido")
-
-@app.post("/api/bot/start")
-async def start_bot():
-    """Iniciar el bot de trading"""
-    if bot_state["running"]:
-        return {"status": "already_running", "message": "Bot already running"}
-    
-    bot_state["running"] = True
-    bot_state["task"] = asyncio.create_task(run_signal_generator())
-    
-    return {
-        "status": "started",
-        "message": "Trading bot started successfully",
-        "timestamp": datetime.now().isoformat()
-    }
-
-@app.post("/api/bot/stop")
-async def stop_bot():
-    """Detener el bot de trading"""
-    if not bot_state["running"]:
-        return {"status": "not_running", "message": "Bot is not running"}
-    
-    bot_state["running"] = False
-    if bot_state["task"]:
-        bot_state["task"].cancel()
-        
-    return {
-        "status": "stopped",
-        "message": "Trading bot stopped successfully",
-        "timestamp": datetime.now().isoformat()
-    }
-
-@app.get("/api/bot/status")
-async def bot_status():
-    """Obtener estado del bot"""
-    uptime = None
-    if bot_state["start_time"]:
-        uptime = str(datetime.now() - bot_state["start_time"])
-    
-    return {
-        "running": bot_state["running"],
-        "signals_count": bot_state["signals_count"],
-        "last_signal": bot_state["last_signal"],
-        "current_signals": bot_state.get("current_signals", []),
-        "start_time": bot_state["start_time"].isoformat() if bot_state["start_time"] else None,
-        "uptime": uptime
-    }
-
-@app.get("/api/bot/signals")
-async def get_bot_signals():
-    """Obtener las señales actuales del bot"""
-    return {
-        "signals": bot_state.get("current_signals", []),
-        "total": len(bot_state.get("current_signals", [])),
-        "last_update": bot_state["last_signal"]["timestamp"] if bot_state.get("last_signal") else None
-    }
+        logger.error(f"Error serving professional dashboard: {e}")
+        return HTMLResponse(
+            content=f"<h1>Error</h1><p>{str(e)}</p>",
+            status_code=500
+        )
 
 # =================== SERVIR ARCHIVOS ESTÁTICOS ===================
 
@@ -701,7 +488,7 @@ if __name__ == "__main__":
     print(f"📡 WebSocket en: ws://localhost:{port}/ws")
     
     uvicorn.run(
-        "web_api:app",
+        "app:app",
         host=host, 
         port=port,
         reload=False,  # Disable reload in production
