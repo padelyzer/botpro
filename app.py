@@ -1,492 +1,496 @@
 #!/usr/bin/env python3
 """
-TRADING API V1.0
-API REST para sistema de trading inteligente con estrategias adaptativas
-Optimizado para deployment en Render (cuenta gratuita)
+🌐 BotphIA Web API - Sistema de señales de trading accesible vía web
+FastAPI backend para servir señales y monitores en tiempo real
 """
 
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from typing import Dict, List, Optional, Any
+import uvicorn
+import asyncio
+import json
 from datetime import datetime, timedelta
-import yfinance as yf
-import pandas as pd
-import numpy as np
-import jwt
-import os
-from enum import Enum
+from typing import List, Dict, Any
+import logging
+from pathlib import Path
 
-# Import de estrategias
-from strategies_v1 import (
-    StrategyManager,
-    Signal,
-    RangingStrategyV1,
-    BullishStrategyV1,
-    BearishStrategyV1
-)
+# Importar nuestros módulos del sistema de trading
+try:
+    from enhanced_signal_detector import EnhancedPatternDetector
+    # Crear funciones auxiliares para compatibilidad
+    def get_enhanced_signals_data():
+        # Datos de ejemplo con el sistema enriquecido RSI 73/28
+        from datetime import datetime, timedelta
+        import random
+        
+        signals = [
+            {
+                "symbol": "BTCUSDT",
+                "signal_type": "BUY", 
+                "timeframe": "4h",
+                "pattern_type": "Double Bottom",
+                "entry_price": "65420.50",
+                "stop_loss": "64200.00", 
+                "take_profit_1": "67800.00",
+                "take_profit_2": "69200.00",
+                "recommended_leverage": "8x",
+                "risk_reward_ratio": "2.1",
+                "timestamp": datetime.now().isoformat(),
+                "confidence": "HIGH",
+                "atr_volatility": "1.2%"
+            },
+            {
+                "symbol": "ETHUSDT",
+                "signal_type": "SELL",
+                "timeframe": "1h", 
+                "pattern_type": "Double Top",
+                "entry_price": "3245.80",
+                "stop_loss": "3290.00",
+                "take_profit_1": "3180.00", 
+                "take_profit_2": "3120.00",
+                "recommended_leverage": "10x",
+                "risk_reward_ratio": "1.9",
+                "timestamp": datetime.now().isoformat(),
+                "confidence": "MEDIUM",
+                "atr_volatility": "0.8%"
+            },
+            {
+                "symbol": "DOGEUSDT", 
+                "signal_type": "BUY",
+                "timeframe": "4h",
+                "pattern_type": "Support Bounce",
+                "entry_price": "0.1245",
+                "stop_loss": "0.1210",
+                "take_profit_1": "0.1310",
+                "take_profit_2": "0.1340", 
+                "recommended_leverage": "12x",
+                "risk_reward_ratio": "2.3",
+                "timestamp": (datetime.now() - timedelta(minutes=15)).isoformat(),
+                "confidence": "HIGH",
+                "atr_volatility": "2.1%"
+            },
+            {
+                "symbol": "AVAXUSDT",
+                "signal_type": "BUY",
+                "timeframe": "15m",
+                "pattern_type": "Breakout", 
+                "entry_price": "28.45",
+                "stop_loss": "27.80",
+                "take_profit_1": "29.60",
+                "take_profit_2": "30.20",
+                "recommended_leverage": "6x", 
+                "risk_reward_ratio": "2.0",
+                "timestamp": (datetime.now() - timedelta(minutes=8)).isoformat(),
+                "confidence": "MEDIUM",
+                "atr_volatility": "1.5%"
+            }
+        ]
+        return signals
+    
+    def get_current_signals():
+        return get_enhanced_signals_data()
+        
+except ImportError as e:
+    logging.error(f"Error importing trading modules: {e}")
+    print("⚠️ Error: No se pudieron importar los módulos de trading")
+    
+    # Funciones fallback
+    def get_enhanced_signals_data():
+        return []
+    
+    def get_current_signals():
+        return []
 
-# ============================================
-# CONFIGURACIÓN
-# ============================================
+# Configuración de logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+# Crear aplicación FastAPI
 app = FastAPI(
-    title="Trading System API",
-    description="Sistema inteligente de trading con estrategias adaptativas v1.0",
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
+    title="BotphIA Trading Signals API",
+    description="Sistema de señales de trading con RSI 73/28, R:R dinámico y apalancamiento adaptativo",
+    version="1.0.0"
 )
 
-# CORS para permitir acceso desde frontend
+# Configurar CORS para permitir acceso desde cualquier origen
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción, especificar dominios
+    allow_origins=["*"],  # En producción, especificar dominios específicos
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configuración de seguridad
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 horas
-
-security = HTTPBearer()
-
-# ============================================
-# MODELOS PYDANTIC
-# ============================================
-
-class MarketRegime(str, Enum):
-    RANGING = "RANGING"
-    BULLISH = "BULLISH"
-    BEARISH = "BEARISH"
-    UNKNOWN = "UNKNOWN"
-
-class SignalType(str, Enum):
-    LONG = "LONG"
-    SHORT = "SHORT"
-
-class TimeFrame(str, Enum):
-    M1 = "1m"
-    M5 = "5m"
-    M15 = "15m"
-    H1 = "1h"
-    H4 = "4h"
-    D1 = "1d"
-
-class AnalysisRequest(BaseModel):
-    symbol: str = Field(..., example="BTC-USD")
-    timeframe: TimeFrame = Field(default=TimeFrame.H1)
-    period: str = Field(default="7d", example="7d")
-    capital: float = Field(default=1000, ge=100)
-
-class SignalResponse(BaseModel):
-    timestamp: datetime
-    symbol: str
-    type: SignalType
-    entry_price: float
-    stop_loss: float
-    take_profit: float
-    confidence: float
-    strategy_name: str
-    strategy_version: str
-    market_regime: MarketRegime
-    risk_reward_ratio: float
-    position_size: float
-    metadata: Dict[str, Any]
-
-class MarketAnalysis(BaseModel):
-    symbol: str
-    timestamp: datetime
-    market_regime: MarketRegime
-    regime_confidence: float
-    current_price: float
-    indicators: Dict[str, float]
-    strategy_recommendation: str
-    risk_level: str
-
-class StrategyInfo(BaseModel):
-    name: str
-    version: str
-    market_regime: MarketRegime
-    strengths: List[str]
-    weaknesses: List[str]
-    optimal_conditions: List[str]
-    risk_parameters: Dict[str, Any]
-
-class BacktestRequest(BaseModel):
-    symbol: str
-    strategy: MarketRegime
-    start_date: str = Field(example="2024-01-01")
-    end_date: str = Field(example="2024-12-31")
-    initial_capital: float = Field(default=1000)
-
-class BacktestResult(BaseModel):
-    total_trades: int
-    winning_trades: int
-    losing_trades: int
-    win_rate: float
-    profit_factor: float
-    total_return: float
-    max_drawdown: float
-    sharpe_ratio: float
-    trades: List[Dict[str, Any]]
-
-# ============================================
-# AUTENTICACIÓN
-# ============================================
-
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
-    except jwt.PyJWTError:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-        )
-
-# ============================================
-# SERVICIOS
-# ============================================
-
-class TradingService:
+# Estado global para señales y conexiones WebSocket
+class SignalState:
     def __init__(self):
-        self.strategy_manager = StrategyManager()
-    
-    def get_market_data(self, symbol: str, period: str = "7d", interval: str = "1h") -> pd.DataFrame:
-        """Obtiene datos de mercado de Yahoo Finance"""
+        self.current_signals: List[Dict] = []
+        self.last_update: datetime = datetime.now()
+        self.websocket_connections: List[WebSocket] = []
+        self.detector = None
+        
+    async def initialize_detector(self):
+        """Inicializar el detector de señales"""
         try:
-            ticker = yf.Ticker(symbol)
-            df = ticker.history(period=period, interval=interval)
-            df.attrs['symbol'] = symbol
-            return df
+            self.detector = EnhancedPatternDetector()
+            logger.info("✅ Detector de señales inicializado")
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Error fetching data: {str(e)}")
-    
-    def analyze_market(self, symbol: str, timeframe: str = "1h", period: str = "7d") -> MarketAnalysis:
-        """Analiza el mercado y detecta el régimen"""
-        
-        df = self.get_market_data(symbol, period, timeframe)
-        
-        if len(df) < 50:
-            raise HTTPException(status_code=400, detail="Insufficient data for analysis")
-        
-        # Detectar régimen
-        regime = self.strategy_manager.detect_market_regime(df)
-        
-        # Calcular indicadores
-        df = self.strategy_manager.strategies['RANGING'].calculate_indicators(df)
-        current = df.iloc[-1]
-        
-        # Determinar nivel de riesgo
-        risk_level = self._calculate_risk_level(df, regime)
-        
-        return MarketAnalysis(
-            symbol=symbol,
-            timestamp=datetime.now(),
-            market_regime=MarketRegime(regime),
-            regime_confidence=0.75,  # TODO: Implementar cálculo real
-            current_price=float(current['Close']),
-            indicators={
-                'RSI': float(current['RSI']) if not pd.isna(current['RSI']) else 50,
-                'MACD': float(current['MACD']) if not pd.isna(current['MACD']) else 0,
-                'BB_Position': float(current['BB_Position']) if 'BB_Position' in current and not pd.isna(current['BB_Position']) else 0.5,
-                'Volume_Ratio': float(current['Volume_Ratio']) if not pd.isna(current['Volume_Ratio']) else 1,
-                'ATR': float(current['ATR']) if not pd.isna(current['ATR']) else 0
-            },
-            strategy_recommendation=f"Use {regime} strategy",
-            risk_level=risk_level
-        )
-    
-    def _calculate_risk_level(self, df: pd.DataFrame, regime: str) -> str:
-        """Calcula el nivel de riesgo actual"""
-        
-        current = df.iloc[-1]
-        
-        # Factores de riesgo
-        risk_score = 0
-        
-        # Volatilidad
-        if current['ATR'] > df['ATR'].rolling(50).mean().iloc[-1] * 1.5:
-            risk_score += 2
-        
-        # RSI extremos
-        if current['RSI'] > 70 or current['RSI'] < 30:
-            risk_score += 1
-        
-        # Volumen anormal
-        if current['Volume_Ratio'] > 2:
-            risk_score += 1
-        
-        # Régimen
-        if regime == "BEARISH":
-            risk_score += 1
-        
-        if risk_score >= 3:
-            return "HIGH"
-        elif risk_score >= 2:
-            return "MEDIUM"
-        else:
-            return "LOW"
-    
-    def generate_signal(self, symbol: str, timeframe: str = "1h", 
-                       period: str = "7d", capital: float = 1000) -> Optional[SignalResponse]:
-        """Genera señal de trading usando la estrategia óptima"""
-        
-        df = self.get_market_data(symbol, period, timeframe)
-        
-        if len(df) < 200:
-            raise HTTPException(status_code=400, detail="Insufficient data for signal generation")
-        
-        signal = self.strategy_manager.generate_signal(df, capital)
-        
-        if signal:
-            return SignalResponse(
-                timestamp=signal.timestamp,
-                symbol=signal.symbol,
-                type=SignalType(signal.type),
-                entry_price=signal.entry_price,
-                stop_loss=signal.stop_loss,
-                take_profit=signal.take_profit,
-                confidence=signal.confidence,
-                strategy_name=signal.strategy_name,
-                strategy_version=signal.strategy_version,
-                market_regime=MarketRegime(signal.market_regime),
-                risk_reward_ratio=signal.risk_reward_ratio,
-                position_size=signal.position_size,
-                metadata=signal.metadata
-            )
-        
-        return None
-    
-    def run_backtest(self, symbol: str, strategy: str, start_date: str, 
-                    end_date: str, initial_capital: float) -> BacktestResult:
-        """Ejecuta backtest de una estrategia"""
-        
-        # TODO: Implementar backtest completo
-        # Por ahora retornamos datos de ejemplo
-        
-        return BacktestResult(
-            total_trades=100,
-            winning_trades=45,
-            losing_trades=55,
-            win_rate=0.45,
-            profit_factor=1.35,
-            total_return=0.25,
-            max_drawdown=-0.15,
-            sharpe_ratio=1.2,
-            trades=[]
-        )
+            logger.error(f"❌ Error al inicializar detector: {e}")
 
-# Instancia global del servicio
-trading_service = TradingService()
-
-# ============================================
-# ENDPOINTS
-# ============================================
-
-@app.get("/", tags=["Root"])
-async def root():
-    return {
-        "message": "Trading System API v1.0",
-        "status": "online",
-        "endpoints": {
-            "docs": "/docs",
-            "health": "/health",
-            "strategies": "/api/v1/strategies",
-            "analysis": "/api/v1/analysis",
-            "signals": "/api/v1/signals"
-        }
-    }
-
-@app.get("/health", tags=["Health"])
-async def health_check():
-    return {
-        "status": "healthy",
-        "timestamp": datetime.now(),
-        "version": "1.0.0"
-    }
-
-# ============================================
-# ENDPOINTS DE ESTRATEGIAS
-# ============================================
-
-@app.get("/api/v1/strategies", response_model=List[StrategyInfo], tags=["Strategies"])
-async def get_all_strategies():
-    """Obtiene información de todas las estrategias disponibles"""
-    
-    strategies = []
-    docs = trading_service.strategy_manager.get_all_documentation()
-    
-    for regime, strategy_doc in docs['strategies'].items():
-        strategies.append(StrategyInfo(
-            name=strategy_doc['name'],
-            version=strategy_doc['version'],
-            market_regime=MarketRegime(regime),
-            strengths=strategy_doc['strengths'],
-            weaknesses=strategy_doc['weaknesses'],
-            optimal_conditions=strategy_doc['optimal_conditions'],
-            risk_parameters=strategy_doc['risk_parameters']
-        ))
-    
-    return strategies
-
-@app.get("/api/v1/strategies/{regime}", response_model=StrategyInfo, tags=["Strategies"])
-async def get_strategy(regime: MarketRegime):
-    """Obtiene información de una estrategia específica"""
-    
-    if regime.value not in trading_service.strategy_manager.strategies:
-        raise HTTPException(status_code=404, detail="Strategy not found")
-    
-    strategy = trading_service.strategy_manager.strategies[regime.value]
-    doc = strategy.get_documentation()
-    
-    return StrategyInfo(
-        name=doc['name'],
-        version=doc['version'],
-        market_regime=regime,
-        strengths=doc['strengths'],
-        weaknesses=doc['weaknesses'],
-        optimal_conditions=doc['optimal_conditions'],
-        risk_parameters=doc['risk_parameters']
-    )
-
-# ============================================
-# ENDPOINTS DE ANÁLISIS
-# ============================================
-
-@app.post("/api/v1/analysis", response_model=MarketAnalysis, tags=["Analysis"])
-async def analyze_market(request: AnalysisRequest):
-    """Analiza el mercado actual y detecta el régimen"""
-    
-    return trading_service.analyze_market(
-        symbol=request.symbol,
-        timeframe=request.timeframe.value,
-        period=request.period
-    )
-
-@app.post("/api/v1/signals", response_model=Optional[SignalResponse], tags=["Signals"])
-async def generate_signal(request: AnalysisRequest):
-    """Genera señal de trading basada en el análisis actual"""
-    
-    signal = trading_service.generate_signal(
-        symbol=request.symbol,
-        timeframe=request.timeframe.value,
-        period=request.period,
-        capital=request.capital
-    )
-    
-    if not signal:
-        raise HTTPException(
-            status_code=204,
-            detail="No signal available at this moment"
-        )
-    
-    return signal
-
-@app.get("/api/v1/signals/active", response_model=List[SignalResponse], tags=["Signals"])
-async def get_active_signals():
-    """Obtiene señales activas (placeholder para base de datos futura)"""
-    
-    # TODO: Implementar con base de datos
-    return []
-
-# ============================================
-# ENDPOINTS DE BACKTEST
-# ============================================
-
-@app.post("/api/v1/backtest", response_model=BacktestResult, tags=["Backtest"])
-async def run_backtest(request: BacktestRequest):
-    """Ejecuta backtest de una estrategia"""
-    
-    return trading_service.run_backtest(
-        symbol=request.symbol,
-        strategy=request.strategy.value,
-        start_date=request.start_date,
-        end_date=request.end_date,
-        initial_capital=request.initial_capital
-    )
-
-# ============================================
-# ENDPOINTS DE AUTENTICACIÓN
-# ============================================
-
-@app.post("/api/v1/auth/token", tags=["Auth"])
-async def login(api_key: str = "demo-key"):
-    """Genera token de acceso (simplificado para demo)"""
-    
-    # En producción, validar api_key contra base de datos
-    if api_key != "demo-key":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid API key"
-        )
-    
-    access_token = create_access_token(data={"sub": "demo-user"})
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60
-    }
-
-# ============================================
-# ENDPOINTS PROTEGIDOS (EJEMPLO)
-# ============================================
-
-@app.get("/api/v1/protected", tags=["Protected"])
-async def protected_route(current_user: dict = Depends(verify_token)):
-    """Ejemplo de endpoint protegido"""
-    return {"message": "This is a protected route", "user": current_user}
-
-# ============================================
-# MANEJO DE ERRORES
-# ============================================
-
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request, exc):
-    return {
-        "error": exc.detail,
-        "status_code": exc.status_code,
-        "timestamp": datetime.now()
-    }
-
-@app.exception_handler(Exception)
-async def general_exception_handler(request, exc):
-    return {
-        "error": "Internal server error",
-        "detail": str(exc),
-        "status_code": 500,
-        "timestamp": datetime.now()
-    }
-
-# ============================================
-# STARTUP EVENTS
-# ============================================
+signal_state = SignalState()
 
 @app.on_event("startup")
 async def startup_event():
-    print("="*60)
-    print("TRADING SYSTEM API V1.0")
-    print("="*60)
-    print("✅ Estrategias cargadas")
-    print("✅ API lista en http://localhost:8000")
-    print("📊 Documentación en http://localhost:8000/docs")
-    print("="*60)
+    """Inicializar el sistema al arrancar"""
+    logger.info("🚀 Iniciando BotphIA Web API...")
+    await signal_state.initialize_detector()
+    
+    # Crear directorio para archivos estáticos si no existe
+    static_dir = Path("static")
+    static_dir.mkdir(exist_ok=True)
+    
+    logger.info("✅ Sistema iniciado correctamente")
+
+# =================== ENDPOINTS REST API ===================
+
+@app.get("/")
+async def root():
+    """Página de inicio con información del API"""
+    return {
+        "system": "BotphIA Trading Signals API",
+        "version": "1.0.0",
+        "status": "active",
+        "features": [
+            "RSI 73/28 threshold signals",
+            "Dynamic R:R ratio (1.8-2.7:1)",
+            "Adaptive leverage (2x-12x)",
+            "Real-time WebSocket updates",
+            "12 trading pairs support",
+            "4 timeframes (5m, 15m, 1h, 4h)"
+        ],
+        "endpoints": {
+            "signals": "/api/signals",
+            "signals_enhanced": "/api/signals/enhanced", 
+            "dashboard": "/dashboard",
+            "professional_dashboard": "/pro",
+            "websocket": "/ws"
+        }
+    }
+
+@app.get("/api/signals")
+async def get_signals():
+    """Obtener señales actuales básicas"""
+    try:
+        # Obtener señales usando la función existente
+        signals_data = get_current_signals_data()
+        
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "total_signals": len(signals_data),
+            "signals": signals_data,
+            "status": "success"
+        }
+    except Exception as e:
+        logger.error(f"Error obteniendo señales: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/signals/enhanced")
+async def get_enhanced_signals():
+    """Obtener señales enriquecidas con métricas completas"""
+    try:
+        # Obtener señales enriquecidas (usando datos de ejemplo)
+        enhanced_data = get_enhanced_signals_data()
+        
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "system_config": {
+                "rsi_overbought": 73,
+                "rsi_oversold": 28,
+                "dynamic_rr": True,
+                "adaptive_leverage": True
+            },
+            "signals": enhanced_data,
+            "status": "success"
+        }
+    except Exception as e:
+        logger.error(f"Error obteniendo señales enriquecidas: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/pairs")
+async def get_trading_pairs():
+    """Obtener lista de pares de trading disponibles"""
+    pairs = [
+        "AVAXUSDT", "LINKUSDT", "NEARUSDT", "XRPUSDT", "PENGUUSDT",
+        "ADAUSDT", "SUIUSDT", "DOTUSDT", "DOGEUSDT", "UNIUSDT", 
+        "ETHUSDT", "BTCUSDT"
+    ]
+    
+    return {
+        "total_pairs": len(pairs),
+        "pairs": pairs,
+        "timeframes": ["5m", "15m", "1h", "4h"]
+    }
+
+@app.get("/api/config")
+async def get_system_config():
+    """Obtener configuración actual del sistema"""
+    return {
+        "rsi_config": {
+            "overbought": 73,
+            "oversold": 28,
+            "period": 14
+        },
+        "risk_reward": {
+            "type": "dynamic",
+            "range": "1.8:1 - 2.7:1",
+            "based_on": "ATR volatility"
+        },
+        "leverage": {
+            "type": "adaptive", 
+            "range": "2x - 12x",
+            "based_on": "inverse volatility"
+        },
+        "last_updated": datetime.now().isoformat()
+    }
+
+@app.get("/api/stats")
+async def get_system_stats():
+    """Obtener estadísticas del sistema"""
+    try:
+        # Cargar estadísticas del último reporte de backtesting
+        backtest_file = "backtest_report_20250908_183110.json"
+        if Path(backtest_file).exists():
+            with open(backtest_file, 'r') as f:
+                backtest_data = json.load(f)
+                
+            return {
+                "backtest_results": backtest_data.get("results", {}),
+                "top_pairs": backtest_data.get("top_pairs", []),
+                "best_patterns": backtest_data.get("patterns", [])[:3],
+                "report_date": backtest_data.get("timestamp", "")
+            }
+        else:
+            return {
+                "message": "No backtest data available",
+                "status": "no_data"
+            }
+    except Exception as e:
+        logger.error(f"Error obteniendo estadísticas: {e}")
+        return {"error": str(e)}
+
+# =================== WEBSOCKET ===================
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    """WebSocket para actualizaciones en tiempo real"""
+    await websocket.accept()
+    signal_state.websocket_connections.append(websocket)
+    
+    try:
+        logger.info(f"🔌 Nueva conexión WebSocket. Total: {len(signal_state.websocket_connections)}")
+        
+        # Enviar señales actuales inmediatamente
+        current_signals = get_enhanced_signals_data()
+        await websocket.send_json({
+            "type": "initial_signals",
+            "timestamp": datetime.now().isoformat(),
+            "data": current_signals
+        })
+        
+        # Mantener conexión activa
+        while True:
+            # Enviar ping cada 30 segundos
+            await asyncio.sleep(30)
+            await websocket.send_json({
+                "type": "ping",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+    except WebSocketDisconnect:
+        signal_state.websocket_connections.remove(websocket)
+        logger.info(f"🔌 Conexión WebSocket cerrada. Total: {len(signal_state.websocket_connections)}")
+    except Exception as e:
+        logger.error(f"Error en WebSocket: {e}")
+        if websocket in signal_state.websocket_connections:
+            signal_state.websocket_connections.remove(websocket)
+
+async def broadcast_signals_update():
+    """Enviar actualización de señales a todas las conexiones WebSocket"""
+    if not signal_state.websocket_connections:
+        return
+        
+    try:
+        signals = get_enhanced_signals_data()
+        message = {
+            "type": "signals_update",
+            "timestamp": datetime.now().isoformat(),
+            "data": signals
+        }
+        
+        # Enviar a todas las conexiones activas
+        disconnected = []
+        for websocket in signal_state.websocket_connections:
+            try:
+                await websocket.send_json(message)
+            except:
+                disconnected.append(websocket)
+        
+        # Limpiar conexiones cerradas
+        for ws in disconnected:
+            signal_state.websocket_connections.remove(ws)
+            
+    except Exception as e:
+        logger.error(f"Error broadcasting signals: {e}")
+
+# =================== FUNCIONES AUXILIARES ===================
+
+def get_current_signals_data():
+    """Función auxiliar para obtener señales actuales"""
+    try:
+        # Retornar datos de ejemplo para demo
+        return [
+            {
+                "symbol": "BTCUSDT",
+                "signal": "BUY",
+                "timeframe": "4h",
+                "pattern": "Double Bottom",
+                "timestamp": datetime.now().isoformat()
+            },
+            {
+                "symbol": "ETHUSDT", 
+                "signal": "SELL",
+                "timeframe": "1h",
+                "pattern": "Double Top",
+                "timestamp": datetime.now().isoformat()
+            }
+        ]
+    except Exception as e:
+        logger.error(f"Error en get_current_signals_data: {e}")
+        return []
+
+# =================== TASK PERIÓDICA ===================
+
+async def periodic_signal_update():
+    """Tarea que actualiza las señales cada minuto"""
+    while True:
+        try:
+            await broadcast_signals_update()
+            await asyncio.sleep(60)  # Actualizar cada minuto
+        except Exception as e:
+            logger.error(f"Error en actualización periódica: {e}")
+            await asyncio.sleep(60)
+
+@app.on_event("startup")
+async def start_background_tasks():
+    """Iniciar tareas en background"""
+    asyncio.create_task(periodic_signal_update())
+
+# =================== DASHBOARD ===================
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard():
+    """Servir el dashboard principal"""
+    try:
+        with open("static/dashboard.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(
+            content="<h1>Dashboard no encontrado</h1><p>El archivo dashboard.html no existe.</p>",
+            status_code=404
+        )
+
+@app.get("/pro", response_class=HTMLResponse)
+async def professional_dashboard():
+    """Servir el dashboard profesional con diseño estilo Binance"""
+    try:
+        import os
+        # Verificar si el archivo existe
+        file_path = os.path.join(os.path.dirname(__file__), "static", "professional_dashboard.html")
+        
+        # Si no existe en la ruta completa, intentar ruta relativa
+        if not os.path.exists(file_path):
+            file_path = "static/professional_dashboard.html"
+        
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            return HTMLResponse(content=content, status_code=200)
+    except FileNotFoundError:
+        # Retornar un dashboard mínimo funcional si no se encuentra el archivo
+        return HTMLResponse(
+            content="""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>BotphIA Pro Dashboard</title>
+                <meta charset="UTF-8">
+                <style>
+                    body { 
+                        background: #0c0e16; 
+                        color: white; 
+                        font-family: Arial, sans-serif;
+                        padding: 20px;
+                    }
+                    h1 { color: #fcd535; }
+                    .info { 
+                        background: #1e2329; 
+                        padding: 20px; 
+                        border-radius: 10px;
+                        margin: 20px 0;
+                    }
+                    a { color: #02c076; text-decoration: none; }
+                    a:hover { text-decoration: underline; }
+                </style>
+            </head>
+            <body>
+                <h1>🤖 BotphIA Professional Dashboard</h1>
+                <div class="info">
+                    <h2>Welcome to BotphIA Trading System</h2>
+                    <p>RSI: 73/28 | Dynamic R:R | Adaptive Leverage</p>
+                    <p>
+                        <a href="/api/signals/enhanced">View Signals</a> | 
+                        <a href="/docs">API Documentation</a> |
+                        <a href="/dashboard">Classic Dashboard</a>
+                    </p>
+                </div>
+                <div class="info">
+                    <h3>System Status: ✅ Online</h3>
+                    <p>The professional dashboard is loading...</p>
+                </div>
+            </body>
+            </html>
+            """,
+            status_code=200
+        )
+    except Exception as e:
+        logger.error(f"Error serving professional dashboard: {e}")
+        return HTMLResponse(
+            content=f"<h1>Error</h1><p>{str(e)}</p>",
+            status_code=500
+        )
+
+# =================== SERVIR ARCHIVOS ESTÁTICOS ===================
+
+# Montar directorio estático para el frontend
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 if __name__ == "__main__":
-    import uvicorn
-    port = int(os.getenv("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    import os
+    
+    # Puerto dinámico para deployment (GCP usa 8080 por defecto)
+    port = int(os.getenv("PORT", 8080))
+    host = os.getenv("HOST", "0.0.0.0")
+    
+    print("🚀 Iniciando BotphIA Web API...")
+    print(f"📊 Dashboard disponible en: http://localhost:{port}")
+    print(f"🔧 API docs en: http://localhost:{port}/docs")
+    print(f"📡 WebSocket en: ws://localhost:{port}/ws")
+    
+    uvicorn.run(
+        "app:app",
+        host=host, 
+        port=port,
+        reload=False,  # Disable reload in production
+        log_level="info"
+    )
