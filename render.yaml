@@ -11,6 +11,5 @@ services:
         generateValue: true
       - key: PORT
         value: 10000
-    healthCheckPath: /health
     autoDeploy: true
     plan: free  # Plan gratuito de Render

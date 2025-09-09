@@ -210,13 +210,13 @@ class TradingDatabase:
             cursor.execute("""
                 SELECT * FROM positions 
                 WHERE status = 'OPEN' AND user_id = ?
-                ORDER BY open_time DESC
+                ORDER BY opened_at DESC
             """, (user_id,))
         else:
             cursor.execute("""
                 SELECT * FROM positions 
                 WHERE status = 'OPEN'
-                ORDER BY open_time DESC
+                ORDER BY opened_at DESC
             """)
         
         columns = [col[0] for col in cursor.description]

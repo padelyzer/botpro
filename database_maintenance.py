@@ -88,7 +88,7 @@ class DatabaseMaintenance:
                 WHERE id IN (
                     SELECT id FROM positions 
                     WHERE symbol = ? AND status = 'OPEN'
-                    ORDER BY open_time ASC
+                    ORDER BY opened_at ASC
                     LIMIT ?
                 )
             """, (symbol, excess))

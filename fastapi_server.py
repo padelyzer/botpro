@@ -1171,7 +1171,7 @@ class TradingManager:
                 "pnl_percentage": pos["pnl_percentage"],
                 "philosopher": pos["philosopher"],
                 "confidence": pos["confidence"],
-                "open_time": pos["open_time"].isoformat() if hasattr(pos["open_time"], 'isoformat') else pos["open_time"]
+                "open_time": pos["opened_at"].isoformat() if hasattr(pos["opened_at"], 'isoformat') else pos["opened_at"]
             })
         
         return {
@@ -1349,8 +1349,8 @@ async def get_positions(current_user: dict = Depends(get_current_user_required))
                 'pnl': db_pos.get('pnl', 0),
                 'pnl_percentage': db_pos.get('pnl_percentage', 0),
                 'status': db_pos.get('status', 'OPEN'),
-                'open_time': db_pos.get('open_time', ''),
-                'close_time': db_pos.get('close_time', ''),
+                'open_time': db_pos.get('opened_at', ''),
+                'close_time': db_pos.get('closed_at', ''),
                 'strategy': db_pos.get('strategy', 'Manual')
             }
             user_positions.append(position_dict)
