@@ -562,36 +562,64 @@ bot_state = {
 async def run_signal_generator():
     """Ejecutar el generador de señales en background"""
     try:
-        # Por ahora, simulamos señales para prueba
+        # Importar el generador de señales reales
+        try:
+            from simple_signal_generator import SimpleSignalGenerator
+            generator = SimpleSignalGenerator()
+            logger.info("✅ Generador de señales reales inicializado")
+        except ImportError as e:
+            logger.error(f"Error importando generador: {e}")
+            generator = None
+            
         bot_state["start_time"] = datetime.now()
-        logger.info("🤖 Bot de trading iniciado (modo simulación)")
+        logger.info("🤖 Bot de trading iniciado con señales REALES")
         
         while bot_state["running"]:
             try:
-                # Simular generación de señal cada 60 segundos
-                await asyncio.sleep(60)
-                
-                # Señal simulada
-                signal = {
-                    "symbol": random.choice(["BTCUSDT", "ETHUSDT", "SOLUSDT"]),
-                    "signal_type": random.choice(["BUY", "SELL"]),
-                    "confidence": random.randint(60, 95),
-                    "entry_price": f"{random.uniform(30000, 70000):.2f}",
-                    "timestamp": datetime.now().isoformat()
-                }
-                
-                bot_state["last_signal"] = signal
-                bot_state["signals_count"] += 1
-                
-                logger.info(f"📊 Señal generada: {signal['symbol']} - {signal['signal_type']}")
-                
-                # Enviar a Telegram si está configurado
-                if telegram_notifier:
-                    await telegram_notifier.send_signal(signal)
+                if generator:
+                    # Generar señales reales
+                    signals = await generator.generate_signals()
+                    
+                    if signals:
+                        for signal in signals:
+                            bot_state["last_signal"] = signal
+                            bot_state["signals_count"] += 1
+                            
+                            logger.info(f"📊 Señal REAL: {signal['symbol']} - {signal['signal_type']} (Confianza: {signal['confidence']}%)")
+                            
+                            # Guardar en la lista de señales actuales
+                            if "current_signals" not in bot_state:
+                                bot_state["current_signals"] = []
+                            
+                            # Mantener solo las últimas 10 señales
+                            bot_state["current_signals"].append(signal)
+                            if len(bot_state["current_signals"]) > 10:
+                                bot_state["current_signals"].pop(0)
+                            
+                            # Enviar a Telegram si está configurado
+                            if telegram_notifier and signal['confidence'] >= 70:
+                                await telegram_notifier.send_signal(signal)
+                    else:
+                        logger.info("⏳ No hay señales fuertes en este momento")
+                else:
+                    # Fallback: señal simulada si no hay generador
+                    signal = {
+                        "symbol": random.choice(["BTCUSDT", "ETHUSDT", "SOLUSDT"]),
+                        "signal_type": random.choice(["BUY", "SELL"]),
+                        "confidence": random.randint(60, 95),
+                        "entry_price": f"{random.uniform(30000, 70000):.2f}",
+                        "timestamp": datetime.now().isoformat(),
+                        "warning": "Señal simulada - Generador real no disponible"
+                    }
+                    bot_state["last_signal"] = signal
+                    bot_state["signals_count"] += 1
+                    
+                # Esperar 5 minutos antes de la siguiente verificación
+                await asyncio.sleep(300)  # 5 minutos
                 
             except Exception as e:
                 logger.error(f"Error en generación de señales: {e}")
-                await asyncio.sleep(30)
+                await asyncio.sleep(60)
                 
     except Exception as e:
         logger.error(f"Error fatal en bot: {e}")
@@ -641,8 +669,18 @@ async def bot_status():
         "running": bot_state["running"],
         "signals_count": bot_state["signals_count"],
         "last_signal": bot_state["last_signal"],
+        "current_signals": bot_state.get("current_signals", []),
         "start_time": bot_state["start_time"].isoformat() if bot_state["start_time"] else None,
         "uptime": uptime
+    }
+
+@app.get("/api/bot/signals")
+async def get_bot_signals():
+    """Obtener las señales actuales del bot"""
+    return {
+        "signals": bot_state.get("current_signals", []),
+        "total": len(bot_state.get("current_signals", [])),
+        "last_update": bot_state["last_signal"]["timestamp"] if bot_state.get("last_signal") else None
     }
 
 # =================== SERVIR ARCHIVOS ESTÁTICOS ===================
