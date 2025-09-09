@@ -200,7 +200,7 @@ async def get_signals():
 async def get_enhanced_signals():
     """Obtener señales enriquecidas con métricas completas"""
     try:
-        # Obtener señales enriquecidas
+        # Obtener señales enriquecidas (usando datos de ejemplo)
         enhanced_data = get_enhanced_signals_data()
         
         return {
