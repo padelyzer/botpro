@@ -1,0 +1,195 @@
+//@version=6
+indicator("BotphIA Signal - SOMI USDT", overlay=true)
+
+// ========================================
+// CONFIGURACION DE SIGNAL
+// ========================================
+// Symbol: SOMI/USDT
+// RSI: 25.3 (Sobreventa extrema)
+// Analisis: Posible rebote tecnico
+// ========================================
+
+// Parametros de entrada
+showLevels = input.bool(true, "Mostrar Niveles Entry/SL/TP")
+showInfo = input.bool(true, "Mostrar Tabla de Informacion")
+showBackground = input.bool(true, "Mostrar Zonas de Color")
+
+// Niveles de la signal
+entryPrice = 1.547
+stopLoss = 1.501
+takeProfit1 = 1.593
+takeProfit2 = 1.624
+
+// ========================================
+// VISUALIZACION PRINCIPAL
+// ========================================
+
+// Obtener el precio actual
+currentPrice = close
+
+// Dibujar lineas horizontales usando hline (mas visible)
+entry_line = hline(entryPrice, "Entry", color=color.new(color.blue, 0), linewidth=2, linestyle=hline.style_solid)
+sl_line = hline(stopLoss, "Stop Loss", color=color.new(color.red, 0), linewidth=2, linestyle=hline.style_dashed)
+tp1_line = hline(takeProfit1, "Take Profit 1", color=color.new(color.green, 0), linewidth=2, linestyle=hline.style_dashed)
+tp2_line = hline(takeProfit2, "Take Profit 2", color=color.new(color.green, 50), linewidth=1, linestyle=hline.style_dotted)
+
+// Rellenar zonas entre lineas
+fill(entry_line, sl_line, color=color.new(color.red, 90), title="Zona de Riesgo")
+fill(entry_line, tp1_line, color=color.new(color.green, 90), title="Zona de Profit 1")
+fill(tp1_line, tp2_line, color=color.new(color.green, 95), title="Zona de Profit 2")
+
+// ========================================
+// ETIQUETAS DE PRECIO
+// ========================================
+
+if barstate.islast and showLevels
+    // Etiqueta de Entry
+    label.new(bar_index + 5, entryPrice, 
+              "ENTRY: $" + str.tostring(entryPrice, "#.####"), 
+              color=color.blue, 
+              textcolor=color.white,
+              style=label.style_label_left,
+              size=size.normal)
+    
+    // Etiqueta de Stop Loss
+    label.new(bar_index + 5, stopLoss, 
+              "SL: $" + str.tostring(stopLoss, "#.####") + " (-3%)", 
+              color=color.red, 
+              textcolor=color.white,
+              style=label.style_label_left,
+              size=size.normal)
+    
+    // Etiqueta de Take Profit 1
+    label.new(bar_index + 5, takeProfit1, 
+              "TP1: $" + str.tostring(takeProfit1, "#.####") + " (+3%)", 
+              color=color.green, 
+              textcolor=color.white,
+              style=label.style_label_left,
+              size=size.normal)
+    
+    // Etiqueta de Take Profit 2
+    label.new(bar_index + 5, takeProfit2, 
+              "TP2: $" + str.tostring(takeProfit2, "#.####") + " (+5%)", 
+              color=color.green, 
+              textcolor=color.white,
+              style=label.style_label_left,
+              size=size.small)
+
+// ========================================
+// SIGNAL DE ENTRADA
+// ========================================
+
+// Marcar si el precio esta en zona de compra
+inBuyZone = close <= entryPrice and close >= stopLoss
+
+// Cambiar color de fondo si estamos en zona de compra
+bgcolor(inBuyZone and showBackground ? color.new(color.green, 95) : na, title="Zona de Compra Activa")
+
+// Mostrar flecha de compra si estamos cerca del entry
+if barstate.islast and math.abs(close - entryPrice) / entryPrice < 0.02  // Dentro del 2% del entry
+    label.new(bar_index, low * 0.995, 
+              "BUY ZONE - RSI: 25.3", 
+              color=color.green, 
+              textcolor=color.white,
+              style=label.style_label_up,
+              size=size.large)
+
+// ========================================
+// TABLA DE INFORMACION
+// ========================================
+
+if showInfo and barstate.islast
+    var table infoTable = table.new(position.top_right, 2, 9, bgcolor=color.new(color.black, 80), border_color=color.gray, border_width=1)
+    
+    // Titulo
+    table.cell(infoTable, 0, 0, "SOMI/USDT", 
+               bgcolor=color.blue, 
+               text_color=color.white, 
+               text_size=size.large)
+    table.merge_cells(infoTable, 0, 0, 1, 0)
+    
+    // Precio actual
+    priceColor = close > entryPrice ? color.green : close < stopLoss ? color.red : color.yellow
+    table.cell(infoTable, 0, 1, "Precio Actual:", text_color=color.white, text_size=size.normal)
+    table.cell(infoTable, 1, 1, "$" + str.tostring(close, "#.####"), 
+               text_color=priceColor, 
+               text_size=size.normal)
+    
+    // Entry
+    table.cell(infoTable, 0, 2, "Entry:", text_color=color.white, text_size=size.normal)
+    table.cell(infoTable, 1, 2, "$" + str.tostring(entryPrice, "#.####"), 
+               text_color=color.blue, 
+               text_size=size.normal)
+    
+    // Stop Loss
+    table.cell(infoTable, 0, 3, "Stop Loss:", text_color=color.white, text_size=size.normal)
+    table.cell(infoTable, 1, 3, "$" + str.tostring(stopLoss, "#.####"), 
+               text_color=color.red, 
+               text_size=size.normal)
+    
+    // Take Profit 1
+    table.cell(infoTable, 0, 4, "TP 1 (+3%):", text_color=color.white, text_size=size.normal)
+    table.cell(infoTable, 1, 4, "$" + str.tostring(takeProfit1, "#.####"), 
+               text_color=color.green, 
+               text_size=size.normal)
+    
+    // Take Profit 2
+    table.cell(infoTable, 0, 5, "TP 2 (+5%):", text_color=color.white, text_size=size.normal)
+    table.cell(infoTable, 1, 5, "$" + str.tostring(takeProfit2, "#.####"), 
+               text_color=color.green, 
+               text_size=size.normal)
+    
+    // RSI
+    table.cell(infoTable, 0, 6, "RSI (15m):", text_color=color.white, text_size=size.normal)
+    table.cell(infoTable, 1, 6, "25.3", 
+               text_color=color.red, 
+               text_size=size.normal)
+    
+    // Signal
+    table.cell(infoTable, 0, 7, "Signal:", text_color=color.white, text_size=size.normal)
+    table.cell(infoTable, 1, 7, "SOBREVENTA", 
+               text_color=color.green, 
+               text_size=size.normal)
+    
+    // Estado
+    statusText = close > takeProfit1 ? "TARGET 1" : close > entryPrice ? "EN PROFIT" : close < stopLoss ? "STOP LOSS" : inBuyZone ? "ZONA BUY" : "ESPERANDO"
+    table.cell(infoTable, 0, 8, "Estado:", text_color=color.white, text_size=size.normal)
+    table.cell(infoTable, 1, 8, statusText, 
+               text_color=color.yellow, 
+               text_size=size.normal)
+
+// ========================================
+// ALERTAS
+// ========================================
+
+// Alertas de precio
+alertcondition(close <= entryPrice and close[1] > entryPrice, 
+               title="Entry alcanzado", 
+               message="SOMI/USDT alcanzo zona de entrada $1.547")
+
+alertcondition(close <= stopLoss, 
+               title="Stop Loss", 
+               message="SOMI/USDT toco Stop Loss $1.501")
+
+alertcondition(close >= takeProfit1, 
+               title="Target 1", 
+               message="SOMI/USDT alcanzo Target 1 $1.593")
+
+// ========================================
+// PLOT DE PRECIO ACTUAL
+// ========================================
+
+// Marcar el precio actual con un punto
+plot(close, color=color.new(color.white, 0), linewidth=2, title="Precio")
+
+// RSI en el grafico principal (opcional)
+showRSIValue = input.bool(false, "Mostrar valor RSI en grafico")
+rsi = ta.rsi(close, 14)
+
+if showRSIValue and barstate.islast
+    label.new(bar_index + 10, close, 
+              "RSI: " + str.tostring(rsi, "#.#"), 
+              color=rsi < 30 ? color.green : rsi > 70 ? color.red : color.gray,
+              textcolor=color.white,
+              style=label.style_label_left,
+              size=size.small)

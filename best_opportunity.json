@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-09-08T05:00:06.094203",
+  "opportunity": {
+    "symbol": "ETH",
+    "price": 4329.72,
+    "change": 0.559,
+    "volume": 1040003919.003548,
+    "position": 0.8797789725209053,
+    "signal": "BREAKOUT",
+    "strength": 75,
+    "action": "BUY"
+  }
+}

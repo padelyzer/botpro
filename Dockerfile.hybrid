@@ -1,0 +1,50 @@
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    curl \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install additional dependencies for hybrid system
+RUN pip install --no-cache-dir \
+    python-binance \
+    requests \
+    aiohttp \
+    supervisor
+
+# Copy all application files
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/data
+
+# Create supervisord configuration
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Environment variables (will be overridden by Fly.io secrets)
+ENV PORT=8000
+ENV TRADING_MODE=demo
+ENV SIGNAL_SCAN_INTERVAL=30
+ENV AUTO_TRADE=false
+ENV DATABASE_PATH=/app/data/trading_bot.db
+ENV PYTHONPATH=/app
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Start with supervisor to run both FastAPI and Signal Worker
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

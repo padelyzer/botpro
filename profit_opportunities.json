@@ -1,0 +1,47 @@
+{
+  "timestamp": "2025-09-07T21:59:53.014676",
+  "opportunities": [],
+  "momentum": [
+    {
+      "symbol": "DOGE",
+      "action": "\ud83d\ude80 MOMENTUM",
+      "price": 0.2317,
+      "reason": "Breakout + Volumen",
+      "strength": 80.84157710651829,
+      "target": 0.243285,
+      "stop": 0.22474899999999998
+    }
+  ],
+  "high_volume": [
+    {
+      "symbol": "BTC",
+      "volume": 714.6048423584882,
+      "change": 0.382,
+      "price": 111052.11
+    },
+    {
+      "symbol": "ETH",
+      "volume": 855.851733692044,
+      "change": 0.34,
+      "price": 4311.88
+    },
+    {
+      "symbol": "XRP",
+      "volume": 273.13668175202,
+      "change": 2.363,
+      "price": 2.889
+    },
+    {
+      "symbol": "DOGE",
+      "volume": 282.07111002169,
+      "change": 7.011,
+      "price": 0.2317
+    },
+    {
+      "symbol": "SOL",
+      "volume": 549.4705294783,
+      "change": 2.366,
+      "price": 207.65
+    }
+  ]
+}

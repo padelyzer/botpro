@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotphIA Trading Signals - Visual Strategy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #1e222d;
+            color: #d1d4dc;
+        }
+        
+        .header {
+            background: #131722;
+            padding: 15px 20px;
+            border-bottom: 1px solid #2a2e39;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #26a69a;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: calc(100vh - 60px);
+        }
+        
+        .sidebar {
+            background: #131722;
+            border-right: 1px solid #2a2e39;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .signal-card {
+            background: #1e222d;
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .signal-card:hover {
+            background: #2a2e39;
+            transform: translateX(5px);
+        }
+        
+        .signal-card.active {
+            border-color: #2962ff;
+            background: #2a2e39;
+        }
+        
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .signal-symbol {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .signal-action {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .signal-action.buy {
+            background: #26a69a;
+            color: #fff;
+        }
+        
+        .signal-action.sell {
+            background: #ef5350;
+            color: #fff;
+        }
+        
+        .signal-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 12px;
+        }
+        
+        .signal-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .signal-detail span:first-child {
+            color: #787b86;
+        }
+        
+        .signal-detail span:last-child {
+            color: #d1d4dc;
+            font-weight: 500;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 100%;
+            background: #0c0e15;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Overlay de estrategia - MEJORADO */
+        .strategy-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 10;
+            display: none;
+        }
+        
+        .strategy-overlay.active {
+            display: block;
+        }
+        
+        .price-line {
+            position: absolute;
+            left: 0;
+            right: 80px;
+            height: 2px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .price-line.entry {
+            background: #2962ff;
+            box-shadow: 0 0 10px rgba(41, 98, 255, 0.5);
+        }
+        
+        .price-line.stop-loss {
+            background-image: repeating-linear-gradient(
+                to right,
+                #ef5350,
+                #ef5350 10px,
+                transparent 10px,
+                transparent 20px
+            );
+        }
+        
+        .price-line.take-profit-1 {
+            background-image: repeating-linear-gradient(
+                to right,
+                #26a69a,
+                #26a69a 10px,
+                transparent 10px,
+                transparent 20px
+            );
+        }
+        
+        .price-line.take-profit-2 {
+            background-image: repeating-linear-gradient(
+                to right,
+                rgba(38, 166, 154, 0.5),
+                rgba(38, 166, 154, 0.5) 5px,
+                transparent 5px,
+                transparent 10px
+            );
+        }
+        
+        .price-label {
+            position: absolute;
+            right: -75px;
+            top: -12px;
+            background: #131722;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            border: 1px solid;
+            z-index: 11;
+        }
+        
+        .price-label.entry {
+            color: #2962ff;
+            border-color: #2962ff;
+            background: rgba(41, 98, 255, 0.1);
+        }
+        
+        .price-label.stop-loss {
+            color: #ef5350;
+            border-color: #ef5350;
+            background: rgba(239, 83, 80, 0.1);
+        }
+        
+        .price-label.take-profit {
+            color: #26a69a;
+            border-color: #26a69a;
+            background: rgba(38, 166, 154, 0.1);
+        }
+        
+        .zone-fill {
+            position: absolute;
+            left: 0;
+            right: 80px;
+            pointer-events: none;
+        }
+        
+        .zone-fill.risk-zone {
+            background: linear-gradient(0deg, rgba(239, 83, 80, 0.05) 0%, transparent 100%);
+        }
+        
+        .zone-fill.profit-zone {
+            background: linear-gradient(180deg, rgba(38, 166, 154, 0.05) 0%, transparent 100%);
+        }
+        
+        #tradingview_widget {
+            height: 100%;
+        }
+        
+        .floating-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(19, 23, 34, 0.95);
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 250px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .panel-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2a2e39;
+        }
+        
+        .strategy-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #1e222d;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background: #2a2e39;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #26a69a;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(20px);
+        }
+        
+        .strategy-info {
+            display: none;
+            padding: 10px;
+            background: rgba(38, 166, 154, 0.1);
+            border: 1px solid #26a69a;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        
+        .strategy-info.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .level-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+        
+        .level-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .level-indicator {
+            width: 3px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        
+        .level-indicator.entry { background: #2962ff; }
+        .level-indicator.sl { background: #ef5350; }
+        .level-indicator.tp { background: #26a69a; }
+        
+        .level-value {
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .confidence-bar {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #2a2e39;
+        }
+        
+        .confidence-label {
+            font-size: 12px;
+            color: #787b86;
+            margin-bottom: 5px;
+        }
+        
+        .confidence-progress {
+            height: 6px;
+            background: #2a2e39;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef5350, #ffa726, #26a69a);
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+        
+        .action-buttons {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #2962ff;
+            color: #fff;
+        }
+        
+        .btn-success {
+            background: #26a69a;
+            color: #fff;
+        }
+        
+        .btn-secondary {
+            background: #2a2e39;
+            color: #d1d4dc;
+        }
+        
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+        
+        .btn.active {
+            background: #26a69a;
+            box-shadow: 0 0 20px rgba(38, 166, 154, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span>🤖</span>
+            BotphIA Trading Signals
+        </h1>
+        <div class="status">
+            <span class="status-dot"></span>
+            <span>Live</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div id="somi-signal" class="signal-card active">
+                <div class="signal-header">
+                    <span class="signal-symbol">SOMI/USDT</span>
+                    <span class="signal-action buy">BUY</span>
+                </div>
+                <div class="signal-details">
+                    <div class="signal-detail">
+                        <span>Entry:</span>
+                        <span>$1.547</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span>Target:</span>
+                        <span>$1.593</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span>RSI:</span>
+                        <span>25.3</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span>Conf:</span>
+                        <span>14%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-wrapper">
+                <!-- Overlay de estrategia con líneas HTML/CSS -->
+                <div id="strategyOverlay" class="strategy-overlay">
+                    <!-- Entry Line -->
+                    <div class="price-line entry" id="entryLine" style="top: 45%;">
+                        <div class="price-label entry">ENTRY: $1.547</div>
+                    </div>
+                    
+                    <!-- Stop Loss Line -->
+                    <div class="price-line stop-loss" id="slLine" style="top: 52%;">
+                        <div class="price-label stop-loss">SL: $1.501</div>
+                    </div>
+                    
+                    <!-- Take Profit 1 Line -->
+                    <div class="price-line take-profit-1" id="tp1Line" style="top: 38%;">
+                        <div class="price-label take-profit">TP1: $1.593</div>
+                    </div>
+                    
+                    <!-- Take Profit 2 Line -->
+                    <div class="price-line take-profit-2" id="tp2Line" style="top: 35%;">
+                        <div class="price-label take-profit">TP2: $1.624</div>
+                    </div>
+                    
+                    <!-- Risk Zone -->
+                    <div class="zone-fill risk-zone" id="riskZone" style="top: 45%; height: 7%;"></div>
+                    
+                    <!-- Profit Zone -->
+                    <div class="zone-fill profit-zone" id="profitZone" style="top: 38%; height: 7%;"></div>
+                </div>
+                
+                <!-- TradingView Widget -->
+                <div id="tradingview_widget"></div>
+            </div>
+            
+            <div class="floating-panel">
+                <div class="panel-title">
+                    <span id="signalTitle">SOMI/USDT Signal</span>
+                </div>
+                
+                <div class="strategy-toggle">
+                    <div id="strategyToggle" class="toggle-switch" onclick="toggleStrategy()">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span>Visualizar Estrategia</span>
+                </div>
+                
+                <div id="strategyInfo" class="strategy-info">
+                    ✅ Estrategia visualizada en el gráfico
+                </div>
+                
+                <div id="levelsList">
+                    <div class="level-item">
+                        <div class="level-label">
+                            <div class="level-indicator entry"></div>
+                            <span>Entry Price</span>
+                        </div>
+                        <span class="level-value" id="entryValue">$1.547</span>
+                    </div>
+                    
+                    <div class="level-item">
+                        <div class="level-label">
+                            <div class="level-indicator sl"></div>
+                            <span>Stop Loss</span>
+                        </div>
+                        <span class="level-value" id="slValue">$1.501</span>
+                    </div>
+                    
+                    <div class="level-item">
+                        <div class="level-label">
+                            <div class="level-indicator tp"></div>
+                            <span>Take Profit 1</span>
+                        </div>
+                        <span class="level-value" id="tp1Value">$1.593</span>
+                    </div>
+                    
+                    <div class="level-item">
+                        <div class="level-label">
+                            <div class="level-indicator tp"></div>
+                            <span>Take Profit 2</span>
+                        </div>
+                        <span class="level-value" id="tp2Value">$1.624</span>
+                    </div>
+                </div>
+                
+                <div class="confidence-bar">
+                    <div class="confidence-label">Confidence: <span id="confValue">14%</span></div>
+                    <div class="confidence-progress">
+                        <div class="confidence-fill" id="confBar" style="width: 14%"></div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" id="visualizeBtn" onclick="toggleStrategy()">
+                        <span>👁️</span>
+                        <span>Visualizar Estrategia</span>
+                    </button>
+                    
+                    <button class="btn btn-primary" onclick="copyPineScript()">
+                        <span>📋</span>
+                        <span>Copiar Pine Script</span>
+                    </button>
+                    
+                    <button class="btn btn-secondary" onclick="openInTradingView()">
+                        <span>📊</span>
+                        <span>Abrir en TradingView</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+        // Estado de la aplicación
+        let currentSignal = {
+            symbol: 'SOMI/USDT',
+            entry: 1.547,
+            stopLoss: 1.501,
+            takeProfit1: 1.593,
+            takeProfit2: 1.624,
+            confidence: 14,
+            action: 'BUY',
+            currentPrice: 1.545  // Precio actual aproximado
+        };
+        
+        let strategyVisible = false;
+        let widget = null;
+        let priceRange = { min: 0.8, max: 2.2 }; // Rango de precios visible en el gráfico
+        
+        // Configuración del widget de TradingView
+        function initTradingView(symbol = 'BINANCE:SOMIUSDT') {
+            const config = {
+                "autosize": true,
+                "symbol": symbol,
+                "interval": "15",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "es",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "withdateranges": true,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "details": true,
+                "hotlist": true,
+                "calendar": true,
+                "container_id": "tradingview_widget",
+                "studies": [
+                    "RSI@tv-basicstudies",
+                    "BB@tv-basicstudies"
+                ],
+                "show_popup_button": true,
+                "popup_width": "1000",
+                "popup_height": "650"
+            };
+            
+            widget = new TradingView.widget(config);
+        }
+        
+        // Calcular posición de las líneas basado en el precio
+        function calculateLinePosition(price) {
+            // Calcular el porcentaje de posición basado en el rango de precios
+            const range = priceRange.max - priceRange.min;
+            const relativePosition = (priceRange.max - price) / range;
+            return (relativePosition * 80 + 10) + '%'; // 80% del espacio disponible con 10% de margen
+        }
+        
+        // Actualizar posiciones de las líneas
+        function updateLinePositions() {
+            const entryLine = document.getElementById('entryLine');
+            const slLine = document.getElementById('slLine');
+            const tp1Line = document.getElementById('tp1Line');
+            const tp2Line = document.getElementById('tp2Line');
+            const riskZone = document.getElementById('riskZone');
+            const profitZone = document.getElementById('profitZone');
+            
+            if (entryLine) {
+                entryLine.style.top = calculateLinePosition(currentSignal.entry);
+            }
+            if (slLine) {
+                slLine.style.top = calculateLinePosition(currentSignal.stopLoss);
+            }
+            if (tp1Line) {
+                tp1Line.style.top = calculateLinePosition(currentSignal.takeProfit1);
+            }
+            if (tp2Line) {
+                tp2Line.style.top = calculateLinePosition(currentSignal.takeProfit2);
+            }
+            
+            // Actualizar zonas
+            if (riskZone && entryLine && slLine) {
+                const entryPos = parseFloat(entryLine.style.top);
+                const slPos = parseFloat(slLine.style.top);
+                riskZone.style.top = entryPos + '%';
+                riskZone.style.height = Math.abs(slPos - entryPos) + '%';
+            }
+            
+            if (profitZone && entryLine && tp1Line) {
+                const tp1Pos = parseFloat(tp1Line.style.top);
+                const entryPos = parseFloat(entryLine.style.top);
+                profitZone.style.top = tp1Pos + '%';
+                profitZone.style.height = Math.abs(entryPos - tp1Pos) + '%';
+            }
+        }
+        
+        // Toggle estrategia
+        function toggleStrategy() {
+            strategyVisible = !strategyVisible;
+            const toggle = document.getElementById('strategyToggle');
+            const info = document.getElementById('strategyInfo');
+            const btn = document.getElementById('visualizeBtn');
+            const overlay = document.getElementById('strategyOverlay');
+            
+            if (strategyVisible) {
+                toggle.classList.add('active');
+                info.classList.add('active');
+                btn.classList.add('active');
+                overlay.classList.add('active');
+                btn.innerHTML = '<span>✅</span><span>Estrategia Activa</span>';
+                
+                // Actualizar posiciones de las líneas
+                updateLinePositions();
+            } else {
+                toggle.classList.remove('active');
+                info.classList.remove('active');
+                btn.classList.remove('active');
+                overlay.classList.remove('active');
+                btn.innerHTML = '<span>👁️</span><span>Visualizar Estrategia</span>';
+            }
+        }
+        
+        // Copiar Pine Script
+        function copyPineScript() {
+            const pineScript = `//@version=5
+indicator("SOMI Strategy Levels", overlay=true)
+
+// Niveles
+entryPrice = ${currentSignal.entry}
+stopLoss = ${currentSignal.stopLoss}
+takeProfit1 = ${currentSignal.takeProfit1}
+takeProfit2 = ${currentSignal.takeProfit2}
+
+// Líneas
+hline(entryPrice, "Entry", color=color.blue, linewidth=2)
+hline(stopLoss, "Stop Loss", color=color.red, linewidth=2, linestyle=hline.style_dashed)
+hline(takeProfit1, "TP 1", color=color.green, linewidth=2, linestyle=hline.style_dashed)
+hline(takeProfit2, "TP 2", color=color.green, linewidth=1, linestyle=hline.style_dotted)
+
+// Etiquetas
+if barstate.islast
+    label.new(bar_index + 5, entryPrice, "ENTRY: $" + str.tostring(entryPrice, "#.###"), 
+              style=label.style_label_left, color=color.blue, textcolor=color.white)
+    label.new(bar_index + 5, stopLoss, "SL: $" + str.tostring(stopLoss, "#.###"), 
+              style=label.style_label_left, color=color.red, textcolor=color.white)
+    label.new(bar_index + 5, takeProfit1, "TP1: $" + str.tostring(takeProfit1, "#.###"), 
+              style=label.style_label_left, color=color.green, textcolor=color.white)
+
+// Zona de entrada
+bgcolor(close <= entryPrice and close >= stopLoss ? color.new(color.green, 95) : na)`;
+            
+            navigator.clipboard.writeText(pineScript).then(() => {
+                const btn = event.target.closest('.btn');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<span>✅</span><span>Copiado!</span>';
+                btn.style.background = '#26a69a';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+        
+        // Abrir en TradingView
+        function openInTradingView() {
+            window.open('https://www.tradingview.com/chart/?symbol=BINANCE:SOMIUSDT', '_blank');
+        }
+        
+        // Inicializar al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            initTradingView();
+            updateLinePositions();
+        });
+        
+        // Ajustar posiciones cuando cambie el tamaño de la ventana
+        window.addEventListener('resize', function() {
+            if (strategyVisible) {
+                updateLinePositions();
+            }
+        });
+    </script>
+</body>
+</html>

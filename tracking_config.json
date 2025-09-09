@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-08-23T14:20:38.147054",
+  "tracking_initial_balance": 220.0,
+  "real_initial_balance": 16621.02658623,
+  "balance_offset": 16401.02658623,
+  "current_tracking_balance": 220.0,
+  "pnl_total": 0,
+  "pnl_percentage": 0,
+  "trades_count": 0,
+  "winning_trades": 0,
+  "losing_trades": 0,
+  "positions_open": 0,
+  "peak_balance": 220.0,
+  "lowest_balance": 220.0,
+  "max_drawdown": 0,
+  "current_drawdown": 0,
+  "active": true,
+  "session_id": 1
+}

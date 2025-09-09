@@ -1,0 +1,37 @@
+[Unit]
+Description=BotphIA Trading Bot - Sistema de Trading Continuo
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ja
+Group=staff
+WorkingDirectory=/Users/ja/saby/trading_api
+Environment="PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin"
+Environment="PYTHONPATH=/Users/ja/saby/trading_api"
+Environment="PYTHONUNBUFFERED=1"
+
+# Comando principal
+ExecStart=/usr/bin/python3 /Users/ja/saby/trading_api/run_system.py
+
+# Reinicio automático
+Restart=always
+RestartSec=10
+StartLimitInterval=200
+StartLimitBurst=5
+
+# Logging
+StandardOutput=append:/Users/ja/saby/trading_api/logs/system.log
+StandardError=append:/Users/ja/saby/trading_api/logs/error.log
+
+# Límites de recursos
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Timeout
+TimeoutStartSec=30
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

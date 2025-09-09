@@ -1,0 +1,27 @@
+FROM python:3.11-slim
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar requirements
+COPY requirements_web.txt .
+
+# Instalar dependencias de Python
+RUN pip install --no-cache-dir -r requirements_web.txt
+
+# Copiar código de la aplicación
+COPY . .
+
+# Crear directorio static si no existe
+RUN mkdir -p static
+
+# Exponer puerto
+EXPOSE 8888
+
+# Comando para ejecutar la aplicación
+CMD ["python", "web_api.py"]

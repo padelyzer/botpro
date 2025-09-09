@@ -1,0 +1,65 @@
+
+============================================================
+Timestamp: 2025-08-25T13:37:33.171776
+Symbol: ETHUSDT
+Setup: LONG_PULLBACK
+Direction: LONG
+Entry: $4478.94
+Stop: $4382.10
+TP1: $4568.52
+TP2: $4635.70
+TP3: $4702.89
+R/R: 1:1.62
+Confidence: MEDIUM
+
+============================================================
+Timestamp: 2025-08-25T14:40:49.508449
+Symbol: ETHUSDT
+Setup: LONG_PULLBACK
+Direction: LONG
+Entry: $4378.74
+Stop: $4309.49
+TP1: $4466.31
+TP2: $4532.00
+TP3: $4597.68
+R/R: 1:2.21
+Confidence: MEDIUM
+
+============================================================
+Timestamp: 2025-08-25T14:42:08.396149
+Symbol: BNBUSDT
+Setup: LONG_PULLBACK
+Direction: LONG
+Entry: $852.70
+Stop: $839.91
+TP1: $869.76
+TP2: $882.55
+TP3: $895.34
+R/R: 1:2.33
+Confidence: MEDIUM
+
+============================================================
+Timestamp: 2025-08-25T14:49:37.112624
+Symbol: ADAUSDT
+Setup: LONG_PULLBACK
+Direction: LONG
+Entry: $0.83
+Stop: $0.82
+TP1: $0.85
+TP2: $0.86
+TP3: $0.87
+R/R: 1:2.33
+Confidence: MEDIUM
+
+============================================================
+Timestamp: 2025-08-25T15:49:11.930034
+Symbol: BNBUSDT
+Setup: LONG_PULLBACK
+Direction: LONG
+Entry: $842.68
+Stop: $828.68
+TP1: $859.54
+TP2: $872.18
+TP3: $884.82
+R/R: 1:2.11
+Confidence: MEDIUM

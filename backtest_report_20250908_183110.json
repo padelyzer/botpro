@@ -1,0 +1,92 @@
+{
+  "timestamp": "2025-09-08T18:31:10.343013",
+  "config": {
+    "rsi_overbought": 73,
+    "rsi_oversold": 28,
+    "dynamic_rr": true,
+    "adaptive_leverage": true,
+    "pairs": 12,
+    "timeframes": 4,
+    "period_days": 360
+  },
+  "results": {
+    "period": "360 d\u00edas",
+    "initial_capital": 10000,
+    "final_capital": 18450,
+    "total_return": 84.5,
+    "total_trades": 1247,
+    "winning_trades": 761,
+    "losing_trades": 486,
+    "win_rate": 61.0,
+    "avg_win": 3.8,
+    "avg_loss": -1.9,
+    "max_drawdown": -12.3,
+    "sharpe_ratio": 1.85,
+    "avg_leverage": 7.2,
+    "avg_rr_achieved": 2.1
+  },
+  "top_pairs": [
+    {
+      "symbol": "PENGUUSDT",
+      "trades": 142,
+      "win_rate": 68.3,
+      "pnl": 287.5
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "trades": 128,
+      "win_rate": 65.6,
+      "pnl": 215.3
+    },
+    {
+      "symbol": "ETHUSDT",
+      "trades": 115,
+      "win_rate": 63.5,
+      "pnl": 189.2
+    },
+    {
+      "symbol": "AVAXUSDT",
+      "trades": 108,
+      "win_rate": 62.0,
+      "pnl": 156.8
+    },
+    {
+      "symbol": "BTCUSDT",
+      "trades": 95,
+      "win_rate": 61.1,
+      "pnl": 142.3
+    }
+  ],
+  "patterns": [
+    {
+      "pattern": "Double Bottom",
+      "signals": 287,
+      "win_rate": 72.5,
+      "avg_rr": 2.3
+    },
+    {
+      "pattern": "Double Top",
+      "signals": 254,
+      "win_rate": 68.9,
+      "avg_rr": 2.2
+    },
+    {
+      "pattern": "Support Bounce",
+      "signals": 198,
+      "win_rate": 64.1,
+      "avg_rr": 2.1
+    },
+    {
+      "pattern": "Breakout",
+      "signals": 176,
+      "win_rate": 61.4,
+      "avg_rr": 2.4
+    },
+    {
+      "pattern": "Triangle Patterns",
+      "signals": 152,
+      "win_rate": 58.6,
+      "avg_rr": 2.0
+    }
+  ]
+}

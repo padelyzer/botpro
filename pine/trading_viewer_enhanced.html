@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotphIA Trading Signals - TradingView</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #1e222d;
+            color: #d1d4dc;
+        }
+        
+        .header {
+            background: #131722;
+            padding: 15px 20px;
+            border-bottom: 1px solid #2a2e39;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #26a69a;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: calc(100vh - 60px);
+        }
+        
+        .sidebar {
+            background: #131722;
+            border-right: 1px solid #2a2e39;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .signal-card {
+            background: #1e222d;
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .signal-card:hover {
+            background: #2a2e39;
+            transform: translateX(5px);
+        }
+        
+        .signal-card.active {
+            border-color: #2962ff;
+            background: #2a2e39;
+        }
+        
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .signal-symbol {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .signal-action {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .signal-action.buy {
+            background: #26a69a;
+            color: #fff;
+        }
+        
+        .signal-action.sell {
+            background: #ef5350;
+            color: #fff;
+        }
+        
+        .signal-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 12px;
+        }
+        
+        .signal-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .signal-detail span:first-child {
+            color: #787b86;
+        }
+        
+        .signal-detail span:last-child {
+            color: #d1d4dc;
+            font-weight: 500;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 100%;
+            background: #0c0e15;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .strategy-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .price-level {
+            position: absolute;
+            left: 0;
+            right: 60px;
+            height: 2px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .price-level.entry {
+            background: linear-gradient(to right, transparent, #2962ff 10%, #2962ff 90%, transparent);
+        }
+        
+        .price-level.stop-loss {
+            background: linear-gradient(to right, transparent, #ef5350 10%, #ef5350 90%, transparent);
+            background-image: repeating-linear-gradient(
+                to right,
+                #ef5350,
+                #ef5350 10px,
+                transparent 10px,
+                transparent 20px
+            );
+        }
+        
+        .price-level.take-profit {
+            background: linear-gradient(to right, transparent, #26a69a 10%, #26a69a 90%, transparent);
+            background-image: repeating-linear-gradient(
+                to right,
+                #26a69a,
+                #26a69a 10px,
+                transparent 10px,
+                transparent 20px
+            );
+        }
+        
+        .price-label {
+            position: absolute;
+            right: -60px;
+            background: #131722;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            border: 1px solid;
+        }
+        
+        .price-label.entry {
+            color: #2962ff;
+            border-color: #2962ff;
+        }
+        
+        .price-label.stop-loss {
+            color: #ef5350;
+            border-color: #ef5350;
+        }
+        
+        .price-label.take-profit {
+            color: #26a69a;
+            border-color: #26a69a;
+        }
+        
+        .zone-fill {
+            position: absolute;
+            left: 0;
+            right: 60px;
+            pointer-events: none;
+        }
+        
+        .zone-fill.risk-zone {
+            background: linear-gradient(180deg, rgba(239, 83, 80, 0.1), transparent);
+        }
+        
+        .zone-fill.profit-zone {
+            background: linear-gradient(180deg, transparent, rgba(38, 166, 154, 0.1));
+        }
+        
+        #tradingview_widget {
+            height: 100%;
+        }
+        
+        .floating-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(19, 23, 34, 0.95);
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 250px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .panel-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2a2e39;
+        }
+        
+        .level-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+        
+        .level-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .level-indicator {
+            width: 3px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        
+        .level-indicator.entry { background: #2962ff; }
+        .level-indicator.sl { background: #ef5350; }
+        .level-indicator.tp { background: #26a69a; }
+        
+        .level-value {
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .confidence-bar {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #2a2e39;
+        }
+        
+        .confidence-label {
+            font-size: 12px;
+            color: #787b86;
+            margin-bottom: 5px;
+        }
+        
+        .confidence-progress {
+            height: 6px;
+            background: #2a2e39;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef5350, #ffa726, #26a69a);
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+        
+        .action-buttons {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #2962ff;
+            color: #fff;
+        }
+        
+        .btn-success {
+            background: #26a69a;
+            color: #fff;
+        }
+        
+        .btn-secondary {
+            background: #2a2e39;
+            color: #d1d4dc;
+        }
+        
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+        
+        .btn.active {
+            background: #26a69a;
+            box-shadow: 0 0 20px rgba(38, 166, 154, 0.3);
+        }
+        
+        .strategy-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #1e222d;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background: #2a2e39;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #26a69a;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(20px);
+        }
+        
+        .strategy-info {
+            display: none;
+            padding: 10px;
+            background: rgba(38, 166, 154, 0.1);
+            border: 1px solid #26a69a;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        
+        .strategy-info.active {
+            display: block;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #2962ff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn.loading .loading-spinner {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span>🤖</span>
+            BotphIA Trading Signals
+        </h1>
+        <div class="status">
+            <span class="status-dot"></span>
+            <span>Live</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div id="somi-signal" class="signal-card active" onclick="loadSignal('SOMI/USDT', this)">
+                <div class="signal-header">
+                    <span class="signal-symbol">SOMI/USDT</span>
+                    <span class="signal-action buy">BUY</span>
+                </div>
+                <div class="signal-details">
+                    <div class="signal-detail">
+                        <span>Entry:</span>
+                        <span>$1.547</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span>Target:</span>
+                        <span>$1.593</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span>RSI:</span>
+                        <span>25.3</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span>Conf:</span>
+                        <span>14%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Más señales se pueden agregar aquí dinámicamente -->
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-wrapper">
+                <!-- Overlay de estrategia -->
+                <div id="strategyOverlay" class="strategy-overlay" style="display: none;">
+                    <!-- Las líneas se generarán dinámicamente con JavaScript -->
+                </div>
+                
+                <!-- TradingView Widget -->
+                <div id="tradingview_widget"></div>
+            </div>
+            
+            <div class="floating-panel">
+                <div class="panel-title">
+                    <span id="signalTitle">SOMI/USDT Signal</span>
+                </div>
+                
+                <div class="strategy-toggle">
+                    <div id="strategyToggle" class="toggle-switch" onclick="toggleStrategy()">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span>Visualizar Estrategia</span>
+                </div>
+                
+                <div id="strategyInfo" class="strategy-info">
+                    ✅ Estrategia visualizada en el gráfico
+                </div>
+                
+                <div id="levelsList">
+                    <div class="level-item">
+                        <div class="level-label">
+                            <div class="level-indicator entry"></div>
+                            <span>Entry Price</span>
+                        </div>
+                        <span class="level-value" id="entryValue">$1.547</span>
+                    </div>
+                    
+                    <div class="level-item">
+                        <div class="level-label">
+                            <div class="level-indicator sl"></div>
+                            <span>Stop Loss</span>
+                        </div>
+                        <span class="level-value" id="slValue">$1.501</span>
+                    </div>
+                    
+                    <div class="level-item">
+                        <div class="level-label">
+                            <div class="level-indicator tp"></div>
+                            <span>Take Profit 1</span>
+                        </div>
+                        <span class="level-value" id="tp1Value">$1.593</span>
+                    </div>
+                    
+                    <div class="level-item">
+                        <div class="level-label">
+                            <div class="level-indicator tp"></div>
+                            <span>Take Profit 2</span>
+                        </div>
+                        <span class="level-value" id="tp2Value">$1.624</span>
+                    </div>
+                </div>
+                
+                <div class="confidence-bar">
+                    <div class="confidence-label">Confidence: <span id="confValue">14%</span></div>
+                    <div class="confidence-progress">
+                        <div class="confidence-fill" id="confBar" style="width: 14%"></div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" id="visualizeBtn" onclick="toggleStrategy()">
+                        <span>👁️</span>
+                        <span>Visualizar Estrategia</span>
+                        <div class="loading-spinner"></div>
+                    </button>
+                    
+                    <button class="btn btn-primary" onclick="copyPineScript()">
+                        <span>📋</span>
+                        <span>Copiar Pine Script</span>
+                    </button>
+                    
+                    <button class="btn btn-secondary" onclick="openInTradingView()">
+                        <span>📊</span>
+                        <span>Abrir en TradingView</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+        // Estado de la aplicación
+        let currentSignal = {
+            symbol: 'SOMI/USDT',
+            entry: 1.547,
+            stopLoss: 1.501,
+            takeProfit1: 1.593,
+            takeProfit2: 1.624,
+            confidence: 14,
+            action: 'BUY'
+        };
+        
+        let strategyVisible = false;
+        let widget = null;
+        
+        // Base de datos de señales
+        const signals = {
+            'SOMI/USDT': {
+                symbol: 'SOMI/USDT',
+                entry: 1.547,
+                stopLoss: 1.501,
+                takeProfit1: 1.593,
+                takeProfit2: 1.624,
+                confidence: 14,
+                action: 'BUY',
+                rsi: 25.3
+            }
+        };
+        
+        // Configuración del widget de TradingView
+        function initTradingView(symbol = 'BINANCE:SOMIUSDT') {
+            const config = {
+                "autosize": true,
+                "symbol": symbol,
+                "interval": "15",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "es",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "withdateranges": true,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "details": true,
+                "hotlist": true,
+                "calendar": true,
+                "container_id": "tradingview_widget",
+                "studies": [
+                    "RSI@tv-basicstudies",
+                    "BB@tv-basicstudies"
+                ],
+                "show_popup_button": true,
+                "popup_width": "1000",
+                "popup_height": "650"
+            };
+            
+            widget = new TradingView.widget(config);
+            
+            // Esperar a que el widget se cargue
+            widget.onChartReady(() => {
+                console.log('Chart ready');
+                if (strategyVisible) {
+                    setTimeout(() => applyStrategy(), 1000);
+                }
+            });
+        }
+        
+        // Cargar señal
+        function loadSignal(symbol, element) {
+            // Actualizar UI
+            document.querySelectorAll('.signal-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // Cargar datos de la señal
+            if (signals[symbol]) {
+                currentSignal = signals[symbol];
+                updatePanel();
+            }
+            
+            // Actualizar widget con nuevo símbolo
+            const tvSymbol = symbol.replace('/', '').toUpperCase();
+            initTradingView(`BINANCE:${tvSymbol}`);
+        }
+        
+        // Actualizar panel de información
+        function updatePanel() {
+            document.getElementById('signalTitle').textContent = `${currentSignal.symbol} Signal`;
+            document.getElementById('entryValue').textContent = `$${currentSignal.entry}`;
+            document.getElementById('slValue').textContent = `$${currentSignal.stopLoss}`;
+            document.getElementById('tp1Value').textContent = `$${currentSignal.takeProfit1}`;
+            document.getElementById('tp2Value').textContent = `$${currentSignal.takeProfit2}`;
+            document.getElementById('confValue').textContent = `${currentSignal.confidence}%`;
+            document.getElementById('confBar').style.width = `${currentSignal.confidence}%`;
+        }
+        
+        // Toggle estrategia
+        function toggleStrategy() {
+            strategyVisible = !strategyVisible;
+            const toggle = document.getElementById('strategyToggle');
+            const info = document.getElementById('strategyInfo');
+            const btn = document.getElementById('visualizeBtn');
+            const overlay = document.getElementById('strategyOverlay');
+            
+            if (strategyVisible) {
+                toggle.classList.add('active');
+                info.classList.add('active');
+                btn.classList.add('active');
+                btn.innerHTML = '<span>✅</span><span>Estrategia Activa</span>';
+                
+                // Aplicar estrategia al gráfico
+                applyStrategy();
+            } else {
+                toggle.classList.remove('active');
+                info.classList.remove('active');
+                btn.classList.remove('active');
+                btn.innerHTML = '<span>👁️</span><span>Visualizar Estrategia</span>';
+                
+                // Remover estrategia
+                removeStrategy();
+            }
+        }
+        
+        // Aplicar estrategia al gráfico
+        function applyStrategy() {
+            if (!widget) return;
+            
+            // Crear el Pine Script dinámicamente
+            const pineScript = generatePineScript();
+            
+            // Aplicar el script al gráfico
+            widget.chart().createStudy('Script@tv-scripting-101!', false, false, {
+                text: pineScript
+            });
+            
+            // Mostrar overlay visual (opcional)
+            showVisualOverlay();
+        }
+        
+        // Generar Pine Script dinámico
+        function generatePineScript() {
+            return `
+//@version=5
+indicator("${currentSignal.symbol} Strategy", overlay=true)
+
+// Niveles dinámicos
+entryPrice = ${currentSignal.entry}
+stopLoss = ${currentSignal.stopLoss}
+takeProfit1 = ${currentSignal.takeProfit1}
+takeProfit2 = ${currentSignal.takeProfit2}
+
+// Colores
+colorEntry = color.new(color.blue, 0)
+colorSL = color.new(color.red, 0)
+colorTP1 = color.new(color.green, 0)
+colorTP2 = color.new(color.green, 50)
+
+// Líneas horizontales
+hline(entryPrice, "Entry", colorEntry, hline.style_solid, 2)
+hline(stopLoss, "Stop Loss", colorSL, hline.style_dashed, 2)
+hline(takeProfit1, "TP 1", colorTP1, hline.style_dashed, 2)
+hline(takeProfit2, "TP 2", colorTP2, hline.style_dotted, 1)
+
+// Etiquetas
+if barstate.islast
+    label.new(bar_index + 10, entryPrice, "ENTRY: $" + str.tostring(entryPrice, "#.###"), 
+              style=label.style_label_left, color=colorEntry, textcolor=color.white)
+    label.new(bar_index + 10, stopLoss, "SL: $" + str.tostring(stopLoss, "#.###"), 
+              style=label.style_label_left, color=colorSL, textcolor=color.white)
+    label.new(bar_index + 10, takeProfit1, "TP1: $" + str.tostring(takeProfit1, "#.###"), 
+              style=label.style_label_left, color=colorTP1, textcolor=color.white)
+
+// Zona de entrada
+bgcolor(close <= entryPrice and close >= stopLoss ? color.new(color.green, 95) : na)
+
+// Alertas
+alertcondition(ta.crossunder(close, entryPrice), "Entry Zone", "${currentSignal.symbol} reached entry!")
+alertcondition(close <= stopLoss, "Stop Loss", "Stop Loss hit!")
+alertcondition(close >= takeProfit1, "Take Profit", "Target reached!")
+`;
+        }
+        
+        // Mostrar overlay visual
+        function showVisualOverlay() {
+            // Esta función puede crear elementos DOM sobre el gráfico
+            // para mostrar las líneas de estrategia
+            console.log('Strategy applied');
+        }
+        
+        // Remover estrategia
+        function removeStrategy() {
+            if (widget && widget.chart) {
+                widget.chart().getAllStudies().forEach(study => {
+                    if (study.name.includes('Strategy')) {
+                        widget.chart().removeEntity(study.id);
+                    }
+                });
+            }
+        }
+        
+        // Copiar Pine Script
+        function copyPineScript() {
+            const pineScript = generatePineScript();
+            
+            navigator.clipboard.writeText(pineScript).then(() => {
+                // Cambiar temporalmente el botón para mostrar confirmación
+                const btn = event.target.closest('.btn');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<span>✅</span><span>Copiado!</span>';
+                btn.style.background = '#26a69a';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+        
+        // Abrir en TradingView
+        function openInTradingView() {
+            const symbol = currentSignal.symbol.replace('/', '').toUpperCase();
+            window.open(`https://www.tradingview.com/chart/?symbol=BINANCE:${symbol}`, '_blank');
+        }
+        
+        // Inicializar al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            initTradingView();
+            updatePanel();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+//@version=5
+indicator("SOMI/USDT - BotphIA Signal", overlay=true, max_labels_count=20)
+
+// ========================================
+// NIVELES EXACTOS DE LA SIGNAL
+// ========================================
+entryPrice = 1.547
+stopLoss = 1.501
+takeProfit1 = 1.593
+takeProfit2 = 1.624
+
+// ========================================
+// CONFIGURACION DE COLORES
+// ========================================
+colorEntry = color.rgb(41, 98, 255)
+colorSL = color.rgb(239, 83, 80)
+colorTP = color.rgb(38, 166, 154)
+
+// ========================================
+// LINEAS HORIZONTALES PRECISAS
+// ========================================
+line.new(bar_index[50], entryPrice, bar_index, entryPrice, color=colorEntry, width=2, extend=extend.both, style=line.style_solid)
+line.new(bar_index[50], stopLoss, bar_index, stopLoss, color=colorSL, width=2, extend=extend.both, style=line.style_dashed)
+line.new(bar_index[50], takeProfit1, bar_index, takeProfit1, color=colorTP, width=2, extend=extend.both, style=line.style_dashed)
+line.new(bar_index[50], takeProfit2, bar_index, takeProfit2, color=color.new(colorTP, 50), width=1, extend=extend.both, style=line.style_dotted)
+
+// ========================================
+// ETIQUETAS CON PRECIOS
+// ========================================
+if barstate.islast
+    label.new(bar_index + 5, entryPrice, "ENTRY: $" + str.tostring(entryPrice, "#.####"), color=colorEntry, textcolor=color.white, style=label.style_label_left, size=size.normal)
+    label.new(bar_index + 5, stopLoss, "STOP LOSS: $" + str.tostring(stopLoss, "#.####"), color=colorSL, textcolor=color.white, style=label.style_label_left, size=size.normal)
+    label.new(bar_index + 5, takeProfit1, "TARGET 1: $" + str.tostring(takeProfit1, "#.####"), color=colorTP, textcolor=color.white, style=label.style_label_left, size=size.normal)
+    label.new(bar_index + 5, takeProfit2, "TARGET 2: $" + str.tostring(takeProfit2, "#.####"), color=color.new(colorTP, 30), textcolor=color.white, style=label.style_label_left, size=size.small)
+
+// ========================================
+// DETECCION DE PRECIO ACTUAL
+// ========================================
+isInBuyZone = close <= entryPrice and close >= stopLoss
+isNearEntry = math.abs(close - entryPrice) <= (entryPrice * 0.005)
+
+// Colorear fondo si esta en zona de compra
+bgcolor(isInBuyZone ? color.new(colorTP, 95) : na, title="Zona de Compra Activa")
+
+// ========================================
+// ALERTA VISUAL EN TIEMPO REAL
+// ========================================
+if barstate.isrealtime and isNearEntry
+    label.new(bar_index, high * 1.01, "CERCA DE ENTRY", color=color.orange, textcolor=color.white, style=label.style_label_down, size=size.large)
+
+// ========================================
+// INFORMACION EN TABLA
+// ========================================
+var table infoTable = table.new(position.top_right, 2, 5, bgcolor=color.new(color.black, 80), border_color=color.gray, border_width=1)
+
+if barstate.islast
+    table.cell(infoTable, 0, 0, "SOMI/USDT", bgcolor=color.new(colorEntry, 80), text_color=color.white, text_size=size.large)
+    table.merge_cells(infoTable, 0, 0, 1, 0)
+    
+    table.cell(infoTable, 0, 1, "Precio Actual", text_color=color.gray)
+    table.cell(infoTable, 1, 1, "$" + str.tostring(close, "#.####"), text_color=close > entryPrice ? colorTP : close < stopLoss ? colorSL : color.white)
+    
+    table.cell(infoTable, 0, 2, "Distancia Entry", text_color=color.gray)
+    distancePercent = ((close - entryPrice) / entryPrice) * 100
+    table.cell(infoTable, 1, 2, str.tostring(distancePercent, "#.##") + "%", text_color=distancePercent > 0 ? colorTP : colorSL)
+    
+    table.cell(infoTable, 0, 3, "RSI", text_color=color.gray)
+    rsiValue = ta.rsi(close, 14)
+    table.cell(infoTable, 1, 3, str.tostring(rsiValue, "#.#"), text_color=rsiValue < 30 ? colorTP : rsiValue > 70 ? colorSL : color.white)
+    
+    table.cell(infoTable, 0, 4, "Estado", text_color=color.gray)
+    status = close >= takeProfit1 ? "TARGET" : close <= stopLoss ? "STOP" : isInBuyZone ? "BUY ZONE" : "WAITING"
+    table.cell(infoTable, 1, 4, status, text_color=color.yellow)
+
+// ========================================
+// ALERTAS CONFIGURABLES
+// ========================================
+alertcondition(ta.crossunder(close, entryPrice), title="Entry Alcanzado", message="SOMI/USDT ha alcanzado el precio de entrada $1.547")
+alertcondition(close <= stopLoss, title="Stop Loss Activado", message="SOMI/USDT ha tocado el Stop Loss $1.501")
+alertcondition(close >= takeProfit1, title="Target 1 Alcanzado", message="SOMI/USDT ha alcanzado el Target 1 $1.593")
+alertcondition(close >= takeProfit2, title="Target 2 Alcanzado", message="SOMI/USDT ha alcanzado el Target 2 $1.624")

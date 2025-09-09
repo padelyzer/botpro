@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotphIA Trading Signals - Precise Strategy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #1e222d;
+            color: #d1d4dc;
+        }
+        
+        .header {
+            background: #131722;
+            padding: 15px 20px;
+            border-bottom: 1px solid #2a2e39;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .instructions {
+            background: #131722;
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h2 {
+            color: #2962ff;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #1e222d;
+            border-radius: 6px;
+        }
+        
+        .step-number {
+            background: #2962ff;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        
+        .step-description {
+            color: #787b86;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .code-block {
+            background: #0c0e15;
+            border: 1px solid #2a2e39;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 10px;
+            position: relative;
+            overflow-x: auto;
+        }
+        
+        .code-block pre {
+            color: #d1d4dc;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #2962ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .copy-button:hover {
+            background: #1e53e4;
+            transform: translateY(-2px);
+        }
+        
+        .copy-button.copied {
+            background: #26a69a;
+        }
+        
+        .signal-info {
+            background: #131722;
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .signal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .signal-item {
+            background: #1e222d;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid;
+        }
+        
+        .signal-item.entry { border-color: #2962ff; }
+        .signal-item.stop-loss { border-color: #ef5350; }
+        .signal-item.take-profit { border-color: #26a69a; }
+        .signal-item.info { border-color: #ffa726; }
+        
+        .signal-label {
+            color: #787b86;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .signal-value {
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #2962ff;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #26a69a;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #ffa726;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .alternative-section {
+            background: #131722;
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .alternative-section h3 {
+            color: #ffa726;
+            margin-bottom: 15px;
+        }
+        
+        .iframe-container {
+            background: #0c0e15;
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 600px;
+        }
+        
+        .tv-widget {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .highlight {
+            background: rgba(41, 98, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #2962ff;
+            font-weight: bold;
+        }
+        
+        .warning-box {
+            background: rgba(255, 167, 38, 0.1);
+            border: 1px solid #ffa726;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .warning-box p {
+            color: #ffa726;
+            font-size: 14px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span>🤖</span>
+            BotphIA Trading Signals - Solución Precisa
+        </h1>
+    </div>
+    
+    <div class="container">
+        <!-- Información de la Señal -->
+        <div class="signal-info">
+            <h2>📊 Señal Actual: SOMI/USDT</h2>
+            <div class="signal-grid">
+                <div class="signal-item entry">
+                    <div class="signal-label">Entry Price</div>
+                    <div class="signal-value">$1.547</div>
+                </div>
+                <div class="signal-item stop-loss">
+                    <div class="signal-label">Stop Loss</div>
+                    <div class="signal-value">$1.501</div>
+                </div>
+                <div class="signal-item take-profit">
+                    <div class="signal-label">Take Profit 1</div>
+                    <div class="signal-value">$1.593</div>
+                </div>
+                <div class="signal-item take-profit">
+                    <div class="signal-label">Take Profit 2</div>
+                    <div class="signal-value">$1.624</div>
+                </div>
+                <div class="signal-item info">
+                    <div class="signal-label">RSI (15m)</div>
+                    <div class="signal-value">25.3</div>
+                </div>
+                <div class="signal-item info">
+                    <div class="signal-label">Confidence</div>
+                    <div class="signal-value">14%</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Instrucciones Principales -->
+        <div class="instructions">
+            <h2>🎯 Solución Más Precisa: Pine Script Directo en TradingView</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Copiar el Pine Script Optimizado</div>
+                    <div class="step-description">
+                        Este script está específicamente calibrado para SOMI/USDT con los niveles exactos de tu señal.
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyPineScript(this)">📋 Copiar</button>
+                        <pre id="pineScriptCode">//@version=5
+indicator("SOMI/USDT - BotphIA Signal", overlay=true, max_labels_count=20)
+
+// ========================================
+// NIVELES EXACTOS DE LA SEÑAL
+// ========================================
+entryPrice = 1.547
+stopLoss = 1.501
+takeProfit1 = 1.593
+takeProfit2 = 1.624
+
+// ========================================
+// CONFIGURACIÓN DE COLORES
+// ========================================
+colorEntry = color.rgb(41, 98, 255)     // Azul
+colorSL = color.rgb(239, 83, 80)        // Rojo
+colorTP = color.rgb(38, 166, 154)       // Verde
+
+// ========================================
+// LÍNEAS HORIZONTALES PRECISAS
+// ========================================
+line.new(bar_index[50], entryPrice, bar_index, entryPrice, 
+         color=colorEntry, width=2, extend=extend.both, 
+         style=line.style_solid)
+
+line.new(bar_index[50], stopLoss, bar_index, stopLoss, 
+         color=colorSL, width=2, extend=extend.both, 
+         style=line.style_dashed)
+
+line.new(bar_index[50], takeProfit1, bar_index, takeProfit1, 
+         color=colorTP, width=2, extend=extend.both, 
+         style=line.style_dashed)
+
+line.new(bar_index[50], takeProfit2, bar_index, takeProfit2, 
+         color=color.new(colorTP, 50), width=1, extend=extend.both, 
+         style=line.style_dotted)
+
+// ========================================
+// ETIQUETAS CON PRECIOS
+// ========================================
+if barstate.islast
+    // Entry Label
+    label.new(bar_index + 5, entryPrice, 
+              "ENTRY: $" + str.tostring(entryPrice, "#.####") + 
+              "\nR:R = 1:1", 
+              color=colorEntry, 
+              textcolor=color.white,
+              style=label.style_label_left,
+              size=size.normal)
+    
+    // Stop Loss Label
+    label.new(bar_index + 5, stopLoss, 
+              "STOP LOSS: $" + str.tostring(stopLoss, "#.####") + 
+              "\nRisk: -3%", 
+              color=colorSL, 
+              textcolor=color.white,
+              style=label.style_label_left,
+              size=size.normal)
+    
+    // Take Profit 1 Label
+    label.new(bar_index + 5, takeProfit1, 
+              "TARGET 1: $" + str.tostring(takeProfit1, "#.####") + 
+              "\nProfit: +3%", 
+              color=colorTP, 
+              textcolor=color.white,
+              style=label.style_label_left,
+              size=size.normal)
+    
+    // Take Profit 2 Label
+    label.new(bar_index + 5, takeProfit2, 
+              "TARGET 2: $" + str.tostring(takeProfit2, "#.####") + 
+              "\nProfit: +5%", 
+              color=color.new(colorTP, 30), 
+              textcolor=color.white,
+              style=label.style_label_left,
+              size=size.small)
+
+// ========================================
+// ZONAS SOMBREADAS
+// ========================================
+// Zona de Riesgo (Entry a Stop Loss)
+fill(line.new(bar_index[1], entryPrice, bar_index, entryPrice, color=na),
+     line.new(bar_index[1], stopLoss, bar_index, stopLoss, color=na),
+     color=color.new(colorSL, 95))
+
+// Zona de Profit (Entry a TP1)
+fill(line.new(bar_index[1], entryPrice, bar_index, entryPrice, color=na),
+     line.new(bar_index[1], takeProfit1, bar_index, takeProfit1, color=na),
+     color=color.new(colorTP, 95))
+
+// ========================================
+// DETECCIÓN DE PRECIO ACTUAL
+// ========================================
+isInBuyZone = close <= entryPrice and close >= stopLoss
+isNearEntry = math.abs(close - entryPrice) <= (entryPrice * 0.005) // 0.5% de proximidad
+
+// Colorear fondo si está en zona de compra
+bgcolor(isInBuyZone ? color.new(colorTP, 95) : na, 
+        title="Zona de Compra Activa")
+
+// ========================================
+// ALERTA VISUAL EN TIEMPO REAL
+// ========================================
+if barstate.isrealtime and isNearEntry
+    label.new(bar_index, high * 1.01, 
+              "⚠️ CERCA DE ENTRY", 
+              color=color.orange, 
+              textcolor=color.white,
+              style=label.style_label_down,
+              size=size.large)
+
+// ========================================
+// INFORMACIÓN EN TABLA
+// ========================================
+var table infoTable = table.new(position.top_right, 2, 5, 
+                                bgcolor=color.new(color.black, 80),
+                                border_color=color.gray, 
+                                border_width=1)
+
+if barstate.islast
+    table.cell(infoTable, 0, 0, "SOMI/USDT", 
+               bgcolor=color.new(colorEntry, 80), 
+               text_color=color.white, 
+               text_size=size.large)
+    table.merge_cells(infoTable, 0, 0, 1, 0)
+    
+    table.cell(infoTable, 0, 1, "Precio Actual", text_color=color.gray)
+    table.cell(infoTable, 1, 1, "$" + str.tostring(close, "#.####"), 
+               text_color=close > entryPrice ? colorTP : close < stopLoss ? colorSL : color.white)
+    
+    table.cell(infoTable, 0, 2, "Distancia Entry", text_color=color.gray)
+    distancePercent = ((close - entryPrice) / entryPrice) * 100
+    table.cell(infoTable, 1, 2, str.tostring(distancePercent, "#.##") + "%", 
+               text_color=distancePercent > 0 ? colorTP : colorSL)
+    
+    table.cell(infoTable, 0, 3, "RSI", text_color=color.gray)
+    rsiValue = ta.rsi(close, 14)
+    table.cell(infoTable, 1, 3, str.tostring(rsiValue, "#.#"), 
+               text_color=rsiValue < 30 ? colorTP : rsiValue > 70 ? colorSL : color.white)
+    
+    table.cell(infoTable, 0, 4, "Estado", text_color=color.gray)
+    status = close >= takeProfit1 ? "🎯 TARGET" : close <= stopLoss ? "❌ STOP" : isInBuyZone ? "✅ BUY ZONE" : "⏳ WAITING"
+    table.cell(infoTable, 1, 4, status, text_color=color.yellow)
+
+// ========================================
+// ALERTAS CONFIGURABLES
+// ========================================
+alertcondition(ta.crossunder(close, entryPrice), 
+               title="Entry Alcanzado", 
+               message="SOMI/USDT ha alcanzado el precio de entrada $1.547")
+
+alertcondition(close <= stopLoss, 
+               title="Stop Loss Activado", 
+               message="⚠️ SOMI/USDT ha tocado el Stop Loss $1.501")
+
+alertcondition(close >= takeProfit1, 
+               title="Target 1 Alcanzado", 
+               message="✅ SOMI/USDT ha alcanzado el Target 1 $1.593")
+
+alertcondition(close >= takeProfit2, 
+               title="Target 2 Alcanzado", 
+               message="🎯 SOMI/USDT ha alcanzado el Target 2 $1.624")</pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Abrir TradingView con SOMI/USDT</div>
+                    <div class="step-description">
+                        Click en el botón para abrir TradingView con el par correcto, o usa el enlace directo.
+                    </div>
+                    <div class="buttons-container">
+                        <button class="btn btn-primary" onclick="openTradingView()">
+                            <span>📊</span>
+                            <span>Abrir TradingView</span>
+                        </button>
+                        <button class="btn btn-warning" onclick="copyLink()">
+                            <span>🔗</span>
+                            <span>Copiar Link</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Pegar en Pine Editor</div>
+                    <div class="step-description">
+                        En TradingView, abre el Pine Editor (parte inferior o <span class="highlight">Alt+E</span> / <span class="highlight">Cmd+E</span>), 
+                        pega el código y presiona <span class="highlight">Add to Chart</span>.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <p>💡 <strong>Tip:</strong> Este script incluye líneas que se extienden automáticamente, zonas sombreadas, tabla de información en tiempo real, y alertas configurables. Todo está calibrado específicamente para SOMI/USDT.</p>
+            </div>
+        </div>
+        
+        <!-- Alternativa: Widget Embebido -->
+        <div class="alternative-section">
+            <h3>📈 Alternativa: Vista Previa con Widget de TradingView</h3>
+            <p style="color: #787b86; margin-bottom: 15px;">
+                Aquí puedes ver el gráfico en tiempo real. Para agregar las líneas de estrategia, copia el Pine Script de arriba y pégalo en el Pine Editor de TradingView.
+            </p>
+            
+            <div class="iframe-container">
+                <!-- TradingView Widget BEGIN -->
+                <div class="tradingview-widget-container">
+                    <div id="tradingview_advanced"></div>
+                </div>
+                <!-- TradingView Widget END -->
+            </div>
+            
+            <div class="buttons-container">
+                <button class="btn btn-success" onclick="refreshWidget()">
+                    <span>🔄</span>
+                    <span>Actualizar Gráfico</span>
+                </button>
+                <button class="btn btn-primary" onclick="downloadPineScript()">
+                    <span>💾</span>
+                    <span>Descargar Pine Script</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+        // Inicializar widget
+        function initWidget() {
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "BINANCE:SOMIUSDT",
+                "interval": "15",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "es",
+                "enable_publishing": false,
+                "withdateranges": true,
+                "range": "1D",
+                "hide_side_toolbar": false,
+                "allow_symbol_change": false,
+                "container_id": "tradingview_advanced",
+                "studies": [
+                    {
+                        id: "RSI@tv-basicstudies",
+                        inputs: {
+                            length: 14
+                        }
+                    },
+                    {
+                        id: "BB@tv-basicstudies",
+                        inputs: {
+                            length: 20
+                        }
+                    }
+                ],
+                "show_popup_button": true,
+                "popup_width": "1000",
+                "popup_height": "650",
+                "height": 600,
+                "width": "100%"
+            });
+        }
+        
+        // Copiar Pine Script
+        function copyPineScript(button) {
+            const code = document.getElementById('pineScriptCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✅ Copiado!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = '📋 Copiar';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+        
+        // Abrir TradingView
+        function openTradingView() {
+            window.open('https://www.tradingview.com/chart/?symbol=BINANCE:SOMIUSDT', '_blank');
+        }
+        
+        // Copiar link
+        function copyLink() {
+            const link = 'https://www.tradingview.com/chart/?symbol=BINANCE:SOMIUSDT';
+            navigator.clipboard.writeText(link).then(() => {
+                alert('Link copiado al portapapeles!');
+            });
+        }
+        
+        // Descargar Pine Script
+        function downloadPineScript() {
+            const code = document.getElementById('pineScriptCode').textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'SOMI_USDT_Strategy.pine';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Actualizar widget
+        function refreshWidget() {
+            document.getElementById('tradingview_advanced').innerHTML = '';
+            initWidget();
+        }
+        
+        // Inicializar al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            initWidget();
+        });
+    </script>
+</body>
+</html>

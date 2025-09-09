@@ -1,0 +1,13 @@
+
+============================================================
+Timestamp: 2025-08-27T22:52:18.179604
+Symbol: BTCUSDT
+Setup: SHORT_PULLBACK
+Direction: SHORT
+Entry: $112833.88
+Stop: $114526.39
+TP1: $110577.20
+TP2: $108884.69
+TP3: $109102.50
+R/R: 1:2.33
+Confidence: MEDIUM

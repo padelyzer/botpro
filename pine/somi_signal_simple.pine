@@ -1,0 +1,39 @@
+//@version=5
+indicator("SOMI Signal Levels", overlay=true)
+
+// Niveles de la signal
+entryPrice = 1.547
+stopLoss = 1.501
+takeProfit1 = 1.593
+takeProfit2 = 1.624
+
+// Colores
+colorEntry = color.new(color.blue, 0)
+colorSL = color.new(color.red, 0)
+colorTP1 = color.new(color.green, 0)
+colorTP2 = color.new(color.green, 50)
+
+// Lineas horizontales
+hline(entryPrice, "Entry", colorEntry, hline.style_solid, 2)
+hline(stopLoss, "Stop Loss", colorSL, hline.style_dashed, 2)
+hline(takeProfit1, "TP 1", colorTP1, hline.style_dashed, 2)
+hline(takeProfit2, "TP 2", colorTP2, hline.style_dotted, 1)
+
+// Etiquetas en la ultima barra
+if barstate.islast
+    label.new(bar_index + 10, entryPrice, "ENTRY: $" + str.tostring(entryPrice, "#.###"), 
+              style=label.style_label_left, color=colorEntry, textcolor=color.white)
+    label.new(bar_index + 10, stopLoss, "SL: $" + str.tostring(stopLoss, "#.###"), 
+              style=label.style_label_left, color=colorSL, textcolor=color.white)
+    label.new(bar_index + 10, takeProfit1, "TP1: $" + str.tostring(takeProfit1, "#.###"), 
+              style=label.style_label_left, color=colorTP1, textcolor=color.white)
+    label.new(bar_index + 10, takeProfit2, "TP2: $" + str.tostring(takeProfit2, "#.###"), 
+              style=label.style_label_left, color=colorTP2, textcolor=color.white)
+
+// Zona de entrada sombreada
+bgcolor(close <= entryPrice and close >= stopLoss ? color.new(color.green, 95) : na)
+
+// Alert cuando toca entry
+alertcondition(ta.crossunder(close, entryPrice), "Entry Zone", "SOMI reached entry zone!")
+alertcondition(close <= stopLoss, "Stop Loss Hit", "Stop Loss touched!")
+alertcondition(close >= takeProfit1, "TP1 Hit", "Take Profit 1 reached!")

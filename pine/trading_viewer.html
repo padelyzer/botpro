@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotphIA Trading Signals - TradingView</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #1e222d;
+            color: #d1d4dc;
+        }
+        
+        .header {
+            background: #131722;
+            padding: 15px 20px;
+            border-bottom: 1px solid #2a2e39;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #26a69a;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: calc(100vh - 60px);
+        }
+        
+        .sidebar {
+            background: #131722;
+            border-right: 1px solid #2a2e39;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .signal-card {
+            background: #1e222d;
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .signal-card:hover {
+            background: #2a2e39;
+            transform: translateX(5px);
+        }
+        
+        .signal-card.active {
+            border-color: #2962ff;
+            background: #2a2e39;
+        }
+        
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .signal-symbol {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .signal-action {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .signal-action.buy {
+            background: #26a69a;
+            color: #fff;
+        }
+        
+        .signal-action.sell {
+            background: #ef5350;
+            color: #fff;
+        }
+        
+        .signal-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 12px;
+        }
+        
+        .signal-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .signal-detail span:first-child {
+            color: #787b86;
+        }
+        
+        .signal-detail span:last-child {
+            color: #d1d4dc;
+            font-weight: 500;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 100%;
+        }
+        
+        #tradingview_widget {
+            height: 100%;
+        }
+        
+        .floating-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(19, 23, 34, 0.95);
+            border: 1px solid #2a2e39;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 250px;
+            z-index: 100;
+        }
+        
+        .panel-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2a2e39;
+        }
+        
+        .level-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+        
+        .level-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .level-indicator {
+            width: 3px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        
+        .level-indicator.entry { background: #2962ff; }
+        .level-indicator.sl { background: #ef5350; }
+        .level-indicator.tp { background: #26a69a; }
+        
+        .level-value {
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .confidence-bar {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #2a2e39;
+        }
+        
+        .confidence-label {
+            font-size: 12px;
+            color: #787b86;
+            margin-bottom: 5px;
+        }
+        
+        .confidence-progress {
+            height: 6px;
+            background: #2a2e39;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef5350, #ffa726, #26a69a);
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+        
+        .action-buttons {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: #2962ff;
+            color: #fff;
+        }
+        
+        .btn-secondary {
+            background: #2a2e39;
+            color: #d1d4dc;
+        }
+        
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span>🤖</span>
+            BotphIA Trading Signals
+        </h1>
+        <div class="status">
+            <span class="status-dot"></span>
+            <span>Live</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="signal-card active" onclick="loadSignal('SOMI/USDT')">
+                <div class="signal-header">
+                    <span class="signal-symbol">SOMI/USDT</span>
+                    <span class="signal-action buy">BUY</span>
+                </div>
+                <div class="signal-details">
+                    <div class="signal-detail">
+                        <span>Entry:</span>
+                        <span>$1.547</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span>Target:</span>
+                        <span>$1.593</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span>RSI:</span>
+                        <span>25.3</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span>Conf:</span>
+                        <span>14%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Más señales se pueden agregar aquí dinámicamente -->
+        </div>
+        
+        <div class="chart-container">
+            <!-- TradingView Widget -->
+            <div id="tradingview_widget"></div>
+            
+            <div class="floating-panel">
+                <div class="panel-title">SOMI/USDT Signal</div>
+                
+                <div class="level-item">
+                    <div class="level-label">
+                        <div class="level-indicator entry"></div>
+                        <span>Entry Price</span>
+                    </div>
+                    <span class="level-value">$1.547</span>
+                </div>
+                
+                <div class="level-item">
+                    <div class="level-label">
+                        <div class="level-indicator sl"></div>
+                        <span>Stop Loss</span>
+                    </div>
+                    <span class="level-value">$1.501</span>
+                </div>
+                
+                <div class="level-item">
+                    <div class="level-label">
+                        <div class="level-indicator tp"></div>
+                        <span>Take Profit 1</span>
+                    </div>
+                    <span class="level-value">$1.593</span>
+                </div>
+                
+                <div class="level-item">
+                    <div class="level-label">
+                        <div class="level-indicator tp"></div>
+                        <span>Take Profit 2</span>
+                    </div>
+                    <span class="level-value">$1.624</span>
+                </div>
+                
+                <div class="confidence-bar">
+                    <div class="confidence-label">Confidence: 14%</div>
+                    <div class="confidence-progress">
+                        <div class="confidence-fill" style="width: 14%"></div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyPineScript()">
+                        Copy Pine Script
+                    </button>
+                    <button class="btn btn-secondary" onclick="openInTradingView()">
+                        Open in TV
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TradingView Widget Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript">
+        // Configuración del widget de TradingView
+        function initTradingView(symbol = 'BINANCE:SOMIUSDT') {
+            new TradingView.widget({
+                "width": "100%",
+                "height": "100%",
+                "symbol": symbol,
+                "interval": "15",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "es",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "container_id": "tradingview_widget",
+                "studies": [
+                    "RSI@tv-basicstudies",
+                    "BB@tv-basicstudies"
+                ],
+                "show_popup_button": true,
+                "popup_width": "1000",
+                "popup_height": "650"
+            });
+        }
+        
+        // Cargar señal
+        function loadSignal(symbol) {
+            // Actualizar widget con nuevo símbolo
+            const tvSymbol = symbol.replace('/', '').toUpperCase();
+            initTradingView(`BINANCE:${tvSymbol}`);
+            
+            // Actualizar panel de información
+            document.querySelector('.panel-title').textContent = `${symbol} Signal`;
+        }
+        
+        // Copiar Pine Script
+        function copyPineScript() {
+            // Pine Script simplificado para SOMI
+            const pineScript = `//@version=5
+indicator("SOMI Signal Levels", overlay=true)
+
+// Niveles de la signal
+entryPrice = 1.547
+stopLoss = 1.501
+takeProfit1 = 1.593
+takeProfit2 = 1.624
+
+// Colores
+colorEntry = color.new(color.blue, 0)
+colorSL = color.new(color.red, 0)
+colorTP1 = color.new(color.green, 0)
+colorTP2 = color.new(color.green, 50)
+
+// Lineas horizontales
+hline(entryPrice, "Entry", colorEntry, hline.style_solid, 2)
+hline(stopLoss, "Stop Loss", colorSL, hline.style_dashed, 2)
+hline(takeProfit1, "TP 1", colorTP1, hline.style_dashed, 2)
+hline(takeProfit2, "TP 2", colorTP2, hline.style_dotted, 1)
+
+// Etiquetas en la ultima barra
+if barstate.islast
+    label.new(bar_index + 10, entryPrice, "ENTRY: $" + str.tostring(entryPrice, "#.###"), 
+              style=label.style_label_left, color=colorEntry, textcolor=color.white)
+    label.new(bar_index + 10, stopLoss, "SL: $" + str.tostring(stopLoss, "#.###"), 
+              style=label.style_label_left, color=colorSL, textcolor=color.white)
+    label.new(bar_index + 10, takeProfit1, "TP1: $" + str.tostring(takeProfit1, "#.###"), 
+              style=label.style_label_left, color=colorTP1, textcolor=color.white)
+    label.new(bar_index + 10, takeProfit2, "TP2: $" + str.tostring(takeProfit2, "#.###"), 
+              style=label.style_label_left, color=colorTP2, textcolor=color.white)
+
+// Zona de entrada sombreada
+bgcolor(close <= entryPrice and close >= stopLoss ? color.new(color.green, 95) : na)
+
+// Alert cuando toca entry
+alertcondition(ta.crossunder(close, entryPrice), "Entry Zone", "SOMI reached entry zone!")
+alertcondition(close <= stopLoss, "Stop Loss Hit", "Stop Loss touched!")
+alertcondition(close >= takeProfit1, "TP1 Hit", "Take Profit 1 reached!")`;
+            
+            navigator.clipboard.writeText(pineScript).then(() => {
+                alert('Pine Script copiado al portapapeles!');
+            });
+        }
+        
+        // Abrir en TradingView
+        function openInTradingView() {
+            window.open('https://www.tradingview.com/chart/?symbol=BINANCE:SOMIUSDT', '_blank');
+        }
+        
+        // Inicializar al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            initTradingView();
+        });
+    </script>
+</body>
+</html>

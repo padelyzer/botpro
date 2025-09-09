@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Live Liquidity Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #00ff88, #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .connection-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .connected {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .disconnected {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .coin-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 18px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .coin-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff88;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .coin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .coin-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .coin-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .current-price {
+            text-align: right;
+        }
+
+        .price-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .price-change {
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .positive {
+            color: #00ff88;
+        }
+
+        .negative {
+            color: #ff4444;
+        }
+
+        .liquidity-section {
+            margin: 12px 0;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .liquidity-zone {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid;
+        }
+
+        .support-zone {
+            border-left-color: #00ff88;
+        }
+
+        .resistance-zone {
+            border-left-color: #ff4444;
+        }
+
+        .zone-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .zone-price {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .zone-metrics {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .liquidity-bar {
+            height: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .liquidity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00aaff);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+        }
+
+        .liquidity-amount {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .signal-box {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 170, 255, 0.1));
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 255, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+        }
+
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .signal-type {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .signal-confidence {
+            background: #00ff88;
+            color: #000;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .signal-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .signal-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .signal-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .signal-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .imbalance-meter {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .imbalance-bar {
+            height: 30px;
+            background: linear-gradient(90deg, #ff4444 0%, #333 50%, #00ff88 100%);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .imbalance-pointer {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 40px;
+            background: #fff;
+            border-radius: 2px;
+            transition: left 0.5s ease;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .imbalance-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        .liquidation-levels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .liq-column {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .liq-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .liq-level {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .liq-level:last-child {
+            border-bottom: none;
+        }
+
+        .magnet-badge {
+            background: #ffaa00;
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .alert-banner {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            color: #000;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            animation: slideIn 0.5s ease;
+            z-index: 1000;
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #888;
+        }
+
+        .error {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Live Liquidity Dashboard</h1>
+            <p>Real-time liquidity analysis and signal detection</p>
+            <div id="connection-status" class="connection-status disconnected">
+                Connecting...
+            </div>
+            <div id="last-update" style="margin-top: 10px; color: #888; font-size: 0.9rem;"></div>
+        </div>
+
+        <div id="dashboard" class="dashboard">
+            <div class="loading">Loading real-time data...</div>
+        </div>
+    </div>
+
+    <div id="alert-banner" class="alert-banner"></div>
+
+    <script>
+        // Configuration
+        const API_URL = 'http://localhost:8003';
+        const UPDATE_INTERVAL = 5000; // 5 seconds
+        const SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT'];
+        
+        let updateTimer = null;
+        let lastSignals = {};
+
+        // Format large numbers
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(2) + 'M';
+            }
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toFixed(2);
+        }
+
+        // Format price
+        function formatPrice(price, symbol) {
+            if (symbol.includes('BTC')) {
+                return price.toFixed(0);
+            }
+            return price.toFixed(2);
+        }
+
+        // Show alert
+        function showAlert(message) {
+            const banner = document.getElementById('alert-banner');
+            banner.textContent = message;
+            banner.style.display = 'block';
+            
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 5000);
+        }
+
+        // Create coin card HTML
+        function createCoinCard(data) {
+            const coinName = data.symbol.replace('USDT', '');
+            const changeColor = data.change24h >= 0 ? 'positive' : 'negative';
+            const changeSymbol = data.change24h >= 0 ? '↑' : '↓';
+            
+            // Sort zones by liquidity
+            const supportZones = (data.liquidityZones?.support || [])
+                .sort((a, b) => b.liquidity - a.liquidity)
+                .slice(0, 3);
+            
+            const resistanceZones = (data.liquidityZones?.resistance || [])
+                .sort((a, b) => b.liquidity - a.liquidity)
+                .slice(0, 3);
+            
+            // Create support zones HTML
+            let supportHTML = supportZones.map(zone => {
+                const maxLiquidity = Math.max(...supportZones.map(z => z.liquidity));
+                const percentage = (zone.liquidity / maxLiquidity) * 100;
+                
+                return `
+                    <div class="liquidity-zone support-zone">
+                        <div class="zone-info">
+                            <span class="zone-price">$${formatPrice(zone.price, data.symbol)}</span>
+                            <div class="zone-metrics">
+                                <span>${zone.distance.toFixed(1)}%</span>
+                                <span>${zone.orders} orders</span>
+                            </div>
+                        </div>
+                        <div class="liquidity-bar">
+                            <div class="liquidity-fill" style="width: ${percentage}%">
+                                <span class="liquidity-amount">$${formatNumber(zone.liquidity)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Create resistance zones HTML
+            let resistanceHTML = resistanceZones.map(zone => {
+                const maxLiquidity = Math.max(...resistanceZones.map(z => z.liquidity));
+                const percentage = (zone.liquidity / maxLiquidity) * 100;
+                
+                return `
+                    <div class="liquidity-zone resistance-zone">
+                        <div class="zone-info">
+                            <span class="zone-price">$${formatPrice(zone.price, data.symbol)}</span>
+                            <div class="zone-metrics">
+                                <span>+${zone.distance.toFixed(1)}%</span>
+                                <span>${zone.orders} orders</span>
+                            </div>
+                        </div>
+                        <div class="liquidity-bar">
+                            <div class="liquidity-fill" style="width: ${percentage}%">
+                                <span class="liquidity-amount">$${formatNumber(zone.liquidity)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Create signal HTML
+            let signalHTML = '';
+            if (data.signal) {
+                const signalColor = data.signal.type === 'LONG' ? '#00ff88' : '#ff4444';
+                signalHTML = `
+                    <div class="signal-box">
+                        <div class="signal-header">
+                            <div class="signal-type" style="color: ${signalColor}">
+                                ${data.signal.type === 'LONG' ? '🟢' : '🔴'} ${data.signal.type} SIGNAL
+                            </div>
+                            <div class="signal-confidence">${data.signal.confidence.toFixed(0)}%</div>
+                        </div>
+                        <div class="signal-details">
+                            <div class="signal-item">
+                                <div class="signal-label">Entry</div>
+                                <div class="signal-value">$${formatPrice(data.signal.entry, data.symbol)}</div>
+                            </div>
+                            <div class="signal-item">
+                                <div class="signal-label">Target</div>
+                                <div class="signal-value">$${formatPrice(data.signal.target, data.symbol)}</div>
+                            </div>
+                            <div class="signal-item">
+                                <div class="signal-label">Stop</div>
+                                <div class="signal-value">$${formatPrice(data.signal.stop, data.symbol)}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; color: #aaa;">
+                            ${data.signal.reason}
+                        </div>
+                    </div>
+                `;
+                
+                // Check for new signal
+                if (!lastSignals[data.symbol] || lastSignals[data.symbol].entry !== data.signal.entry) {
+                    showAlert(`🎯 New ${data.signal.type} signal for ${coinName} with ${data.signal.confidence.toFixed(0)}% confidence!`);
+                    lastSignals[data.symbol] = data.signal;
+                }
+            }
+            
+            // Create liquidation levels HTML
+            const longLiquidations = (data.liquidations?.longs || []).slice(0, 3);
+            const shortLiquidations = (data.liquidations?.shorts || []).slice(0, 3);
+            
+            let liquidationHTML = `
+                <div class="liquidation-levels">
+                    <div class="liq-column">
+                        <div class="liq-title" style="color: #ff4444">Long Liquidations</div>
+                        ${longLiquidations.map(liq => `
+                            <div class="liq-level">
+                                <span>${liq.leverage}</span>
+                                <span>
+                                    $${formatPrice(liq.price, data.symbol)}
+                                    ${liq.isMagnet ? '<span class="magnet-badge">MAGNET</span>' : ''}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="liq-column">
+                        <div class="liq-title" style="color: #00ff88">Short Liquidations</div>
+                        ${shortLiquidations.map(liq => `
+                            <div class="liq-level">
+                                <span>${liq.leverage}</span>
+                                <span>
+                                    $${formatPrice(liq.price, data.symbol)}
+                                    ${liq.isMagnet ? '<span class="magnet-badge">MAGNET</span>' : ''}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Create imbalance meter
+            const imbalance = data.imbalance || 0;
+            const pointerPosition = ((imbalance + 100) / 200) * 100; // Convert -100 to 100 range to 0-100%
+            
+            return `
+                <div class="coin-card">
+                    <div class="coin-header">
+                        <div class="coin-name">
+                            <div class="coin-icon">${coinName.charAt(0)}</div>
+                            ${coinName}
+                        </div>
+                        <div class="current-price">
+                            <div class="price-value">$${formatPrice(data.price, data.symbol)}</div>
+                            <div class="price-change ${changeColor}">
+                                ${changeSymbol} ${Math.abs(data.change24h).toFixed(2)}%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="imbalance-meter">
+                        <div class="imbalance-bar">
+                            <div class="imbalance-pointer" style="left: ${pointerPosition}%"></div>
+                        </div>
+                        <div class="imbalance-labels">
+                            <span style="color: #ff4444">Sellers</span>
+                            <span style="font-weight: bold">${imbalance.toFixed(1)}%</span>
+                            <span style="color: #00ff88">Buyers</span>
+                        </div>
+                    </div>
+                    
+                    ${supportHTML ? `
+                        <div class="liquidity-section">
+                            <div class="section-title">
+                                <span style="color: #00ff88">📊 Support Zones</span>
+                            </div>
+                            ${supportHTML}
+                        </div>
+                    ` : ''}
+                    
+                    ${resistanceHTML ? `
+                        <div class="liquidity-section">
+                            <div class="section-title">
+                                <span style="color: #ff4444">📊 Resistance Zones</span>
+                            </div>
+                            ${resistanceHTML}
+                        </div>
+                    ` : ''}
+                    
+                    ${liquidationHTML}
+                    ${signalHTML}
+                </div>
+            `;
+        }
+
+        // Fetch data from API
+        async function fetchData() {
+            try {
+                const response = await fetch(`${API_URL}/api/liquidity/multi?symbols=${SYMBOLS.join(',')}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+                
+                const data = await response.json();
+                
+                // Update connection status
+                document.getElementById('connection-status').className = 'connection-status connected';
+                document.getElementById('connection-status').textContent = '🟢 Connected';
+                
+                // Update dashboard
+                const dashboard = document.getElementById('dashboard');
+                dashboard.innerHTML = data.map(coinData => createCoinCard(coinData)).join('');
+                
+                // Update timestamp
+                document.getElementById('last-update').textContent = 
+                    `Last updated: ${new Date().toLocaleTimeString()}`;
+                    
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                
+                // Update connection status
+                document.getElementById('connection-status').className = 'connection-status disconnected';
+                document.getElementById('connection-status').textContent = '🔴 Disconnected';
+                
+                // Show error
+                const dashboard = document.getElementById('dashboard');
+                dashboard.innerHTML = `
+                    <div class="error">
+                        Failed to fetch data. Make sure the API server is running on ${API_URL}
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize dashboard
+        async function init() {
+            // Initial fetch
+            await fetchData();
+            
+            // Set up periodic updates
+            updateTimer = setInterval(fetchData, UPDATE_INTERVAL);
+        }
+
+        // Start the dashboard
+        init();
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (updateTimer) {
+                clearInterval(updateTimer);
+            }
+        });
+    </script>
+</body>
+</html>

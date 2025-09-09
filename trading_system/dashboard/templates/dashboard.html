@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Operations Center - Professional Trading System</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/xterm.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">🚀 Crypto Operations Center</h1>
+            <div class="system-status">
+                <span class="status-indicator" id="systemStatus">●</span>
+                <span id="systemStatusText">Initializing...</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="market-ticker" id="marketTicker">
+                <span class="ticker-item">BTC: <span id="btcPrice">Loading...</span></span>
+                <span class="ticker-item">SOL: <span id="solPrice">Loading...</span></span>
+            </div>
+            <div class="time" id="currentTime"></div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-container">
+        <!-- Left Sidebar - Trading Pairs Analysis -->
+        <aside class="sidebar">
+            <!-- Swing Trading Opportunities -->
+            <div class="swing-opportunities-panel">
+                <h3>🎯 Swing Opportunities</h3>
+                <div class="pairs-watchlist">
+                    <!-- BTC -->
+                    <div class="pair-card" data-symbol="BTC">
+                        <div class="pair-header">
+                            <span class="pair-name">BTC/USDT</span>
+                            <span class="pair-price" id="btc-sidebar-price">--</span>
+                        </div>
+                        <div class="pair-metrics">
+                            <div class="metric">
+                                <span class="metric-label">RSI:</span>
+                                <span class="metric-value" id="btc-rsi">--</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">24h:</span>
+                                <span class="metric-value" id="btc-change">--</span>
+                            </div>
+                        </div>
+                        <div class="pair-signal" id="btc-signal">Analyzing...</div>
+                    </div>
+                    
+                    <!-- SOL -->
+                    <div class="pair-card active" data-symbol="SOL">
+                        <div class="pair-header">
+                            <span class="pair-name">SOL/USDT</span>
+                            <span class="pair-price" id="sol-sidebar-price">--</span>
+                        </div>
+                        <div class="pair-metrics">
+                            <div class="metric">
+                                <span class="metric-label">RSI:</span>
+                                <span class="metric-value" id="sol-rsi">--</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">24h:</span>
+                                <span class="metric-value" id="sol-change">--</span>
+                            </div>
+                        </div>
+                        <div class="pair-signal" id="sol-signal">Analyzing...</div>
+                    </div>
+                    
+                    <!-- ETH -->
+                    <div class="pair-card" data-symbol="ETH">
+                        <div class="pair-header">
+                            <span class="pair-name">ETH/USDT</span>
+                            <span class="pair-price" id="eth-sidebar-price">--</span>
+                        </div>
+                        <div class="pair-metrics">
+                            <div class="metric">
+                                <span class="metric-label">RSI:</span>
+                                <span class="metric-value" id="eth-rsi">--</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">24h:</span>
+                                <span class="metric-value" id="eth-change">--</span>
+                            </div>
+                        </div>
+                        <div class="pair-signal" id="eth-signal">Analyzing...</div>
+                    </div>
+                    
+                    <!-- AVAX -->
+                    <div class="pair-card" data-symbol="AVAX">
+                        <div class="pair-header">
+                            <span class="pair-name">AVAX/USDT</span>
+                            <span class="pair-price" id="avax-sidebar-price">--</span>
+                        </div>
+                        <div class="pair-metrics">
+                            <div class="metric">
+                                <span class="metric-label">RSI:</span>
+                                <span class="metric-value" id="avax-rsi">--</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">24h:</span>
+                                <span class="metric-value" id="avax-change">--</span>
+                            </div>
+                        </div>
+                        <div class="pair-signal" id="avax-signal">Analyzing...</div>
+                    </div>
+                    
+                    <!-- NEAR -->
+                    <div class="pair-card" data-symbol="NEAR">
+                        <div class="pair-header">
+                            <span class="pair-name">NEAR/USDT</span>
+                            <span class="pair-price" id="near-sidebar-price">--</span>
+                        </div>
+                        <div class="pair-metrics">
+                            <div class="metric">
+                                <span class="metric-label">RSI:</span>
+                                <span class="metric-value" id="near-rsi">--</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">24h:</span>
+                                <span class="metric-value" id="near-change">--</span>
+                            </div>
+                        </div>
+                        <div class="pair-signal" id="near-signal">Analyzing...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simplified Position Info -->
+            <div class="position-summary">
+                <h3>📊 Active Position</h3>
+                <div class="pos-simple">
+                    <div class="pos-pair">SOL/USDT</div>
+                    <div class="pos-pnl" id="currentPnL">--</div>
+                    <div class="pos-status" id="posStatus">Monitoring</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Market Overview -->
+                <div class="panel market-panel">
+                    <h3>📊 Market Overview</h3>
+                    <div class="market-grid">
+                        <div class="market-item">
+                            <span class="market-label">BTC</span>
+                            <span class="market-price" id="btcPriceMain">--</span>
+                            <span class="market-change" id="btcChange">--</span>
+                        </div>
+                        <div class="market-item">
+                            <span class="market-label">SOL</span>
+                            <span class="market-price" id="solPriceMain">--</span>
+                            <span class="market-change" id="solChange">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Entry Score Panel - DECISION CRITICAL -->
+                <div class="panel score-panel decision-critical">
+                    <h3>🎯 ENTRY DECISION</h3>
+                    <div class="score-display">
+                        <div class="score-value" id="entryScore">--</div>
+                        <div class="decision-status" id="decisionStatus">
+                            ANALYZING MARKET...
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-fill" id="scoreFill"></div>
+                        </div>
+                        <div class="action-recommendation" id="actionRec">
+                            <span class="action-label">ACTION:</span>
+                            <span class="action-value" id="actionValue">WAIT</span>
+                        </div>
+                        <div class="score-factors" id="scoreFactors">
+                            <div class="factor-item">Calculating...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts Panel -->
+                <div class="panel alerts-panel">
+                    <h3>🚨 Live Alerts</h3>
+                    <div class="alerts-container" id="alertsContainer">
+                        <div class="alert-item info">
+                            <span class="alert-time">Initializing...</span>
+                            <span class="alert-message">System starting up</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Correlation Panel -->
+                <div class="panel correlation-panel">
+                    <h3>🔗 BTC/SOL Correlation</h3>
+                    <div class="correlation-display">
+                        <div class="correlation-value" id="correlationValue">--</div>
+                        <div class="correlation-trend" id="correlationTrend">Analyzing...</div>
+                        <div class="rsi-values">
+                            <div class="rsi-item">
+                                <span>BTC RSI:</span>
+                                <span id="btcRsi">--</span>
+                            </div>
+                            <div class="rsi-item">
+                                <span>SOL RSI:</span>
+                                <span id="solRsi">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MACRO SYSTEM ROW -->
+            <div class="macro-system-row">
+                <!-- Philosophers Panel -->
+                <div class="panel philosophers-panel">
+                    <h3>🎭 Consejo Filosófico</h3>
+                    <div class="philosophers-display">
+                        <div class="consensus-score">
+                            <span class="score-label">Consenso:</span>
+                            <span class="score-value" id="philosopherScore">--</span>
+                        </div>
+                        <div class="philosopher-list" id="philosopherList">
+                            <div class="philosopher-item">
+                                <span class="phil-name">Loading...</span>
+                                <span class="phil-opinion">--</span>
+                            </div>
+                        </div>
+                        <div class="phil-recommendation" id="philRecommendation">
+                            Analizando mercado...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Signal Validator Panel -->
+                <div class="panel validator-panel">
+                    <h3>🔍 Validador de Señales</h3>
+                    <div class="validator-display">
+                        <textarea id="signalInput" placeholder="Pega tu señal aquí..." rows="3"></textarea>
+                        <button class="btn btn-validate" onclick="validateSignal()">Validar Señal</button>
+                        <div class="validation-result" id="validationResult">
+                            <div class="validation-score">Score: --/100</div>
+                            <div class="validation-recommendation">Esperando señal...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Macro Analysis Panel -->
+                <div class="panel macro-panel">
+                    <h3>🌍 Análisis Macro</h3>
+                    <div class="macro-display">
+                        <div class="macro-indicators">
+                            <div class="macro-item">
+                                <span class="macro-label">Fear/Greed:</span>
+                                <span class="macro-value" id="fearGreed">--</span>
+                            </div>
+                            <div class="macro-item">
+                                <span class="macro-label">Trend:</span>
+                                <span class="macro-value" id="marketTrend">--</span>
+                            </div>
+                            <div class="macro-item">
+                                <span class="macro-label">Volume:</span>
+                                <span class="macro-value" id="volumeProfile">--</span>
+                            </div>
+                        </div>
+                        <div class="macro-insight" id="macroInsight">
+                            Calculando condiciones macro...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Section -->
+            <div class="terminal-section">
+                <div class="terminal-tabs">
+                    <button class="tab-btn active" onclick="switchTerminal('entry')">Entry Monitor</button>
+                    <button class="tab-btn" onclick="switchTerminal('wait')">Wait Strategy</button>
+                    <button class="tab-btn" onclick="switchTerminal('correlation')">Correlation</button>
+                    <button class="tab-btn" onclick="switchTerminal('console')">Console</button>
+                </div>
+                
+                <!-- Virtual Terminals -->
+                <div class="terminal-container">
+                    <div class="terminal-panel active" id="terminal-entry">
+                        <div class="terminal-header">
+                            <h4>🚨 Entry Alert Monitor Terminal</h4>
+                            <div class="terminal-controls">
+                                <button onclick="clearTerminal('entry')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="terminal-output" id="terminal-entry-output">
+                            <div class="terminal-line">
+                                <span class="timestamp">[19:45:12]</span>
+                                <span class="message">Entry Alert Monitor - Ready to start</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="terminal-panel" id="terminal-wait">
+                        <div class="terminal-header">
+                            <h4>⏳ Wait Strategy Monitor Terminal</h4>
+                            <div class="terminal-controls">
+                                <button onclick="clearTerminal('wait')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="terminal-output" id="terminal-wait-output">
+                            <div class="terminal-line">
+                                <span class="timestamp">[19:45:12]</span>
+                                <span class="message">Wait Strategy Monitor - Ready to start</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="terminal-panel" id="terminal-correlation">
+                        <div class="terminal-header">
+                            <h4>🔗 Correlation Monitor Terminal</h4>
+                            <div class="terminal-controls">
+                                <button onclick="clearTerminal('correlation')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="terminal-output" id="terminal-correlation-output">
+                            <div class="terminal-line">
+                                <span class="timestamp">[19:45:12]</span>
+                                <span class="message">Correlation Monitor - Ready to start</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="terminal-panel" id="terminal-console">
+                        <div class="terminal-header">
+                            <h4>💻 System Console</h4>
+                            <div class="terminal-controls">
+                                <button onclick="clearTerminal('console')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="terminal-output" id="terminal-console-output">
+                            <div class="terminal-line">
+                                <span class="timestamp">[19:45:12]</span>
+                                <span class="message">System Console - Ready</span>
+                            </div>
+                        </div>
+                        <div class="terminal-input">
+                            <input type="text" id="consoleInput" placeholder="Enter command..." onkeypress="handleConsoleInput(event)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/xterm.min.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

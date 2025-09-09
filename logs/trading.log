@@ -1,0 +1,2 @@
+{"timestamp": "2025-08-22T04:29:55.516770+00:00", "level": "INFO", "logger": "trading", "message": "Secure logging system initialized", "module": "secure_logging", "function": "info", "line": 443, "extra": {"taskName": null}}
+{"timestamp": "2025-08-22T04:41:24.312641+00:00", "level": "INFO", "logger": "trading", "message": "Secure logging system initialized", "module": "secure_logging", "function": "info", "line": 443, "extra": {"taskName": null}}

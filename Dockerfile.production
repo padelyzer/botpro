@@ -1,0 +1,144 @@
+# =============================================================================
+# BotPhia Trading API - Production Docker Configuration
+# =============================================================================
+# Multi-stage build for optimized production deployment
+# Security-hardened with non-root user, health checks, and minimal attack surface
+# =============================================================================
+
+# Stage 1: Build stage with all development dependencies
+FROM python:3.11-slim as builder
+
+# Set build arguments
+ARG BUILD_ENV=production
+ARG BUILD_DATE
+ARG BUILD_VERSION
+ARG VCS_REF
+
+# Add metadata labels
+LABEL maintainer="BotPhia Team" \
+      description="BotPhia Trading API - Production Build" \
+      version="${BUILD_VERSION}" \
+      build-date="${BUILD_DATE}" \
+      vcs-ref="${VCS_REF}" \
+      org.opencontainers.image.title="BotPhia Trading API" \
+      org.opencontainers.image.description="Enterprise-grade cryptocurrency trading platform API" \
+      org.opencontainers.image.vendor="BotPhia" \
+      org.opencontainers.image.version="${BUILD_VERSION}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.source="https://github.com/botphia/trading-api" \
+      org.opencontainers.image.revision="${VCS_REF}"
+
+# Install system dependencies for building
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    libpq-dev \
+    libffi-dev \
+    libssl-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Upgrade pip and install build dependencies
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt /tmp/requirements.txt
+COPY requirements-prod.txt* /tmp/
+
+# Install production dependencies
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+    if [ -f /tmp/requirements-prod.txt ]; then pip install --no-cache-dir -r /tmp/requirements-prod.txt; fi
+
+# Stage 2: Production runtime stage
+FROM python:3.11-slim as production
+
+# Set environment variables for production
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONHASHSEED=random \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+
+# Install runtime system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    libffi8 \
+    libssl3 \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create non-root user for security
+RUN groupadd -r botphia && useradd -r -g botphia -d /home/botphia -s /bin/bash -c "BotPhia User" botphia
+
+# Create application directories
+RUN mkdir -p /app /app/logs /app/data /app/backups && \
+    chown -R botphia:botphia /app
+
+# Copy virtual environment from builder stage
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Set working directory
+WORKDIR /app
+
+# Copy application code with proper ownership
+COPY --chown=botphia:botphia . /app/
+
+# Remove unnecessary files for production
+RUN rm -rf /app/tests /app/docs /app/*.md /app/.git* /app/Dockerfile* \
+    && find /app -name "*.pyc" -delete \
+    && find /app -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
+# Create required runtime directories
+RUN mkdir -p /app/logs /app/data /app/backups /app/ssl && \
+    chown -R botphia:botphia /app
+
+# Switch to non-root user
+USER botphia
+
+# Expose application port
+EXPOSE 8080
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+# Production startup command with gunicorn
+CMD ["gunicorn", "--config", "gunicorn.conf.py", "fastapi_server:app"]
+
+# =============================================================================
+# Development stage (optional)
+# =============================================================================
+FROM production as development
+
+# Switch back to root for development tools installation
+USER root
+
+# Install development dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    vim \
+    git \
+    iputils-ping \
+    net-tools \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install development Python packages
+COPY requirements-dev.txt* /tmp/
+RUN if [ -f /tmp/requirements-dev.txt ]; then pip install --no-cache-dir -r /tmp/requirements-dev.txt; fi
+
+# Switch back to non-root user
+USER botphia
+
+# Development command
+CMD ["uvicorn", "fastapi_server:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  botphia-web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "8888:8888"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./static:/app/static
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - botphia-network
+
+networks:
+  botphia-network:
+    driver: bridge

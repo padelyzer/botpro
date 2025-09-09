@@ -1,0 +1,56 @@
+# Trading System Configuration
+# Professional Crypto Trading Tools
+
+# Trading Settings
+trading:
+  default_position_size: 50  # USD
+  leverage: 10
+  liquidation_buffer: 20  # Percentage
+  
+# Monitoring Settings  
+monitoring:
+  refresh_interval: 30  # seconds
+  enable_alerts: true
+  alert_volume: 0.8
+  
+# Price Targets
+targets:
+  sol:
+    buy_zones:
+      - price: 180
+        position_size: 60
+        priority: "primary"
+      - price: 183  
+        position_size: 40
+        priority: "secondary"
+      - price: 175
+        position_size: 80
+        priority: "panic"
+    
+  btc:
+    recovery_level: 110000
+    critical_support: 108000
+    
+# Alert Settings
+alerts:
+  sound_enabled: true
+  notifications_enabled: true
+  min_score_threshold: 60
+  
+# Position Management
+position:
+  current_liquidation: 152.05
+  breakeven_price: 204.0
+  current_size: 29.82
+  
+# API Settings
+api:
+  port: 8003
+  host: "0.0.0.0"
+  cors_enabled: true
+  
+# Logging
+logging:
+  level: "INFO"
+  file: "trading_system.log"
+  max_size_mb: 10

@@ -1,0 +1,115 @@
+{
+  "test_summary": {
+    "timestamp": "2025-08-22T11:14:59.558014",
+    "api_tests_passed": true,
+    "performance_tests_passed": true,
+    "integration_tests_passed": false,
+    "continuous_tests_passed": true
+  },
+  "detailed_results": {
+    "api_tests": {
+      "initialization_optimized": true,
+      "initialization_ccxt": true,
+      "historical_data_optimized": {
+        "success": true,
+        "rows": 100,
+        "time": 0.7285552024841309,
+        "last_close": 116631.4
+      },
+      "historical_data_ccxt": {
+        "success": true,
+        "rows": 100,
+        "time": 3.864837884902954,
+        "last_close": 116660.13
+      },
+      "current_price": {
+        "optimized": 116619.47,
+        "ccxt": 116660.13,
+        "difference": 40.66000000000349,
+        "percentage_diff": 0.03485338135659843
+      }
+    },
+    "performance_tests": {
+      "optimized_avg": 0.2556779914432102,
+      "ccxt_avg": 0.6546753512488471,
+      "improvement_percentage": 60.94583506840705,
+      "total_requests": 9,
+      "optimized_times": [
+        0.7306838035583496,
+        0.18850994110107422,
+        0.1936788558959961,
+        0.1861891746520996,
+        0.23965001106262207,
+        0.18225407600402832,
+        0.21883797645568848,
+        0.18053007125854492,
+        0.18076801300048828
+      ],
+      "ccxt_times": [
+        2.5673279762268066,
+        0.2906458377838135,
+        0.2228410243988037,
+        0.5497598648071289,
+        0.539902925491333,
+        0.6328659057617188,
+        0.32265591621398926,
+        0.5460460186004639,
+        0.2200326919555664
+      ]
+    },
+    "integration_tests": {
+      "error": "cannot import name 'SignalAnalytics' from 'signal_analytics' (/Users/ja/saby/trading_api/signal_analytics.py)"
+    },
+    "continuous_operation_tests": {
+      "duration_minutes": 1,
+      "total_operations": 6,
+      "total_errors": 0,
+      "success_rate": 100.0,
+      "avg_operation_time": 0.46137364705403644,
+      "operations": [
+        {
+          "timestamp": "2025-08-22T11:14:08.068039",
+          "price": 116743.52,
+          "price_time": 0.186492919921875,
+          "data_rows": 10,
+          "data_time": 0.19276905059814453,
+          "total_time": 0.37926197052001953
+        },
+        {
+          "timestamp": "2025-08-22T11:14:18.437867",
+          "price": 116667.84,
+          "price_time": 0.18023896217346191,
+          "data_rows": 10,
+          "data_time": 0.1844320297241211,
+          "total_time": 0.364670991897583
+        },
+        {
+          "timestamp": "2025-08-22T11:14:28.805453",
+          "price": 116689.96,
+          "price_time": 0.17987871170043945,
+          "data_rows": 10,
+          "data_time": 0.18323516845703125,
+          "total_time": 0.3631138801574707
+        },
+        {
+          "timestamp": "2025-08-22T11:14:39.180676",
+          "price": 116681.99,
+          "price_time": 0.18236970901489258,
+          "data_rows": 10,
+          "data_time": 0.18767309188842773,
+          "total_time": 0.3700428009033203
+        },
+        {
+          "timestamp": "2025-08-22T11:14:49.549008",
+          "price": 116693.0,
+          "price_time": 0.17954778671264648,
+          "data_rows": 10,
+          "data_time": 0.18708014488220215,
+          "total_time": 0.36662793159484863
+        }
+      ],
+      "errors": []
+    }
+  },
+  "overall_score": 75.0
+}

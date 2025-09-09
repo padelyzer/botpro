@@ -1,0 +1,13 @@
+
+============================================================
+Timestamp: 2025-08-26T07:57:35.640507
+Symbol: ETHUSDT
+Setup: LONG_PULLBACK
+Direction: LONG
+Entry: $4468.92
+Stop: $4379.54
+TP1: $4558.30
+TP2: $4625.33
+TP3: $4692.37
+R/R: 1:1.75
+Confidence: MEDIUM

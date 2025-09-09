@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquidity Magnet Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #00ff88, #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .coin-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .coin-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff88;
+        }
+
+        .coin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .coin-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .current-price {
+            font-size: 1.25rem;
+            color: #00ff88;
+        }
+
+        .liquidity-zone {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .zone-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .zone-type {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .support {
+            color: #00ff88;
+        }
+
+        .resistance {
+            color: #ff4444;
+        }
+
+        .liquidity-bar {
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .liquidity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00aaff);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .liquidity-value {
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .signal-box {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 170, 255, 0.1));
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .signal-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .signal-badge {
+            background: #00ff88;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .signal-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .signal-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .signal-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .signal-value {
+            font-weight: bold;
+        }
+
+        .liquidation-map {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .liq-level {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            border-left: 3px solid;
+        }
+
+        .liq-long {
+            border-left-color: #ff4444;
+        }
+
+        .liq-short {
+            border-left-color: #00ff88;
+        }
+
+        .magnet-indicator {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #ffaa00;
+            color: #000;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(0, 255, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+        }
+
+        .hot-zone {
+            animation: pulse 2s infinite;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Liquidity Magnet Dashboard</h1>
+            <p>Real-time liquidity analysis and signal detection</p>
+            <div id="lastUpdate" style="margin-top: 10px; color: #888;"></div>
+        </div>
+
+        <div class="dashboard" id="dashboard">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+
+        <button class="refresh-btn" onclick="refreshData()">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            symbols: ['SOLUSDT', 'ETHUSDT', 'BTCUSDT', 'BNBUSDT'],
+            refreshInterval: 5000, // 5 seconds
+            apiEndpoint: 'http://localhost:8002/api/liquidity'
+        };
+
+        // Mock data generator (replace with real API calls)
+        function generateMockData(symbol) {
+            const basePrice = {
+                'SOLUSDT': 200 + Math.random() * 10,
+                'ETHUSDT': 4700 + Math.random() * 100,
+                'BTCUSDT': 95000 + Math.random() * 1000,
+                'BNBUSDT': 680 + Math.random() * 20
+            };
+
+            const price = basePrice[symbol] || 100;
+            
+            return {
+                symbol: symbol,
+                price: price,
+                change24h: (Math.random() - 0.5) * 10,
+                liquidityZones: {
+                    support: [
+                        { price: price * 0.98, liquidity: Math.random() * 10000000, distance: -2 },
+                        { price: price * 0.96, liquidity: Math.random() * 8000000, distance: -4 },
+                        { price: price * 0.95, liquidity: Math.random() * 5000000, distance: -5 }
+                    ],
+                    resistance: [
+                        { price: price * 1.02, liquidity: Math.random() * 7000000, distance: 2 },
+                        { price: price * 1.04, liquidity: Math.random() * 9000000, distance: 4 },
+                        { price: price * 1.06, liquidity: Math.random() * 6000000, distance: 6 }
+                    ]
+                },
+                liquidations: {
+                    longs: [
+                        { leverage: '100x', price: price * 0.99, isMagnet: true },
+                        { leverage: '50x', price: price * 0.98, isMagnet: true },
+                        { leverage: '25x', price: price * 0.96, isMagnet: false }
+                    ],
+                    shorts: [
+                        { leverage: '100x', price: price * 1.01, isMagnet: false },
+                        { leverage: '50x', price: price * 1.02, isMagnet: true },
+                        { leverage: '25x', price: price * 1.04, isMagnet: false }
+                    ]
+                },
+                signal: Math.random() > 0.7 ? {
+                    type: Math.random() > 0.5 ? 'LONG' : 'SHORT',
+                    confidence: Math.floor(70 + Math.random() * 30),
+                    entry: price,
+                    target: price * (Math.random() > 0.5 ? 1.05 : 0.95),
+                    stop: price * (Math.random() > 0.5 ? 0.97 : 1.03),
+                    reason: 'Liquidity magnet detected'
+                } : null,
+                imbalance: (Math.random() - 0.5) * 100
+            };
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            }
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toFixed(2);
+        }
+
+        function createCoinCard(data) {
+            const coinName = data.symbol.replace('USDT', '');
+            const changeColor = data.change24h > 0 ? '#00ff88' : '#ff4444';
+            
+            let signalHtml = '';
+            if (data.signal) {
+                const signalColor = data.signal.type === 'LONG' ? '#00ff88' : '#ff4444';
+                signalHtml = `
+                    <div class="signal-box">
+                        <div class="signal-header">
+                            <span style="color: ${signalColor}">🎯 ${data.signal.type} SIGNAL</span>
+                            <span class="signal-badge">${data.signal.confidence}%</span>
+                        </div>
+                        <div class="signal-details">
+                            <div class="signal-item">
+                                <span class="signal-label">Entry</span>
+                                <span class="signal-value">$${data.signal.entry.toFixed(2)}</span>
+                            </div>
+                            <div class="signal-item">
+                                <span class="signal-label">Target</span>
+                                <span class="signal-value">$${data.signal.target.toFixed(2)}</span>
+                            </div>
+                            <div class="signal-item">
+                                <span class="signal-label">Stop</span>
+                                <span class="signal-value">$${data.signal.stop.toFixed(2)}</span>
+                            </div>
+                            <div class="signal-item">
+                                <span class="signal-label">Reason</span>
+                                <span class="signal-value">${data.signal.reason}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Create support zones HTML
+            let supportHtml = data.liquidityZones.support.map(zone => {
+                const maxLiquidity = Math.max(...data.liquidityZones.support.map(z => z.liquidity));
+                const percentage = (zone.liquidity / maxLiquidity) * 100;
+                const isHot = zone.liquidity > 5000000;
+                
+                return `
+                    <div class="liquidity-zone ${isHot ? 'hot-zone' : ''}">
+                        <div class="zone-header">
+                            <span>$${zone.price.toFixed(2)}</span>
+                            <span>${zone.distance.toFixed(1)}%</span>
+                        </div>
+                        <div class="liquidity-bar">
+                            <div class="liquidity-fill" style="width: ${percentage}%">
+                                <span class="liquidity-value">$${formatNumber(zone.liquidity)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Create liquidation map HTML
+            let liquidationHtml = `
+                <div class="liquidation-map">
+                    <h3 style="margin-bottom: 10px;">Liquidation Zones</h3>
+                    ${data.liquidations.longs.map(liq => `
+                        <div class="liq-level liq-long">
+                            <span>${liq.leverage} Longs</span>
+                            <span>$${liq.price.toFixed(2)}
+                            ${liq.isMagnet ? '<span class="magnet-indicator">MAGNET</span>' : ''}</span>
+                        </div>
+                    `).join('')}
+                    ${data.liquidations.shorts.map(liq => `
+                        <div class="liq-level liq-short">
+                            <span>${liq.leverage} Shorts</span>
+                            <span>$${liq.price.toFixed(2)}
+                            ${liq.isMagnet ? '<span class="magnet-indicator">MAGNET</span>' : ''}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            return `
+                <div class="coin-card">
+                    <div class="coin-header">
+                        <span class="coin-name">${coinName}</span>
+                        <div>
+                            <span class="current-price">$${data.price.toFixed(2)}</span>
+                            <span style="color: ${changeColor}; margin-left: 10px;">
+                                ${data.change24h > 0 ? '↑' : '↓'} ${Math.abs(data.change24h).toFixed(2)}%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value">${data.imbalance.toFixed(1)}%</div>
+                            <div class="stat-label">Imbalance</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">$${formatNumber(
+                                data.liquidityZones.support.reduce((a, b) => a + b.liquidity, 0)
+                            )}</div>
+                            <div class="stat-label">Buy Liquidity</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">$${formatNumber(
+                                data.liquidityZones.resistance.reduce((a, b) => a + b.liquidity, 0)
+                            )}</div>
+                            <div class="stat-label">Sell Liquidity</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div class="zone-type support">Support Zones</div>
+                        ${supportHtml}
+                    </div>
+
+                    ${liquidationHtml}
+                    ${signalHtml}
+                </div>
+            `;
+        }
+
+        function refreshData() {
+            const dashboard = document.getElementById('dashboard');
+            dashboard.innerHTML = '';
+
+            CONFIG.symbols.forEach(symbol => {
+                const data = generateMockData(symbol);
+                dashboard.innerHTML += createCoinCard(data);
+            });
+
+            document.getElementById('lastUpdate').textContent = 
+                `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        // Initial load
+        refreshData();
+
+        // Auto-refresh
+        setInterval(refreshData, CONFIG.refreshInterval);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'r' || e.key === 'R') {
+                refreshData();
+            }
+        });
+    </script>
+</body>
+</html>

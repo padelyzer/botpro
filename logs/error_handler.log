@@ -1,0 +1,1493 @@
+2025-08-22 09:59:06,073 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095906",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:06.067686"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {},
+    "total_errors_handled": 0
+  },
+  "timestamp": "2025-08-22T09:59:06.073679"
+}
+2025-08-22 09:59:06,075 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095906",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:06.074166"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 1
+    },
+    "total_errors_handled": 1
+  },
+  "timestamp": "2025-08-22T09:59:06.075722"
+}
+2025-08-22 09:59:12,493 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095912",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:12.491919"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 2
+    },
+    "total_errors_handled": 2
+  },
+  "timestamp": "2025-08-22T09:59:12.493736"
+}
+2025-08-22 09:59:12,495 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095912",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:12.494090"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 3
+    },
+    "total_errors_handled": 3
+  },
+  "timestamp": "2025-08-22T09:59:12.495784"
+}
+2025-08-22 09:59:18,450 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095918",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:18.449503"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 4
+    },
+    "total_errors_handled": 4
+  },
+  "timestamp": "2025-08-22T09:59:18.450578"
+}
+2025-08-22 09:59:18,452 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095918",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:18.451031"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 5
+    },
+    "total_errors_handled": 5
+  },
+  "timestamp": "2025-08-22T09:59:18.452048"
+}
+2025-08-22 09:59:23,621 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095923",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:23.617967"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 6
+    },
+    "total_errors_handled": 6
+  },
+  "timestamp": "2025-08-22T09:59:23.620877"
+}
+2025-08-22 09:59:23,623 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095923",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:23.621587"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 7
+    },
+    "total_errors_handled": 7
+  },
+  "timestamp": "2025-08-22T09:59:23.623188"
+}
+2025-08-22 09:59:28,715 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095928",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:28.714086"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 8
+    },
+    "total_errors_handled": 8
+  },
+  "timestamp": "2025-08-22T09:59:28.715186"
+}
+2025-08-22 09:59:28,716 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095928",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:28.715478"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 9
+    },
+    "total_errors_handled": 9
+  },
+  "timestamp": "2025-08-22T09:59:28.716548"
+}
+2025-08-22 09:59:32,951 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095932",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:32.950472"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 10
+    },
+    "total_errors_handled": 10
+  },
+  "timestamp": "2025-08-22T09:59:32.951489"
+}
+2025-08-22 09:59:32,952 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095932",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:32.951671"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 11
+    },
+    "total_errors_handled": 11
+  },
+  "timestamp": "2025-08-22T09:59:32.952665"
+}
+2025-08-22 09:59:38,014 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095938",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:38.009829"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 12
+    },
+    "total_errors_handled": 12
+  },
+  "timestamp": "2025-08-22T09:59:38.014077"
+}
+2025-08-22 09:59:38,018 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095938",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:38.014667"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 13
+    },
+    "total_errors_handled": 13
+  },
+  "timestamp": "2025-08-22T09:59:38.018245"
+}
+2025-08-22 09:59:40,798 - botphia.error_handler - CRITICAL - {
+  "error_id": "WebSocketError_20250822_095940",
+  "error_details": {
+    "error_type": "WebSocketError",
+    "error_code": "WebSocketError",
+    "message": "Broadcast failed: name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_broadcast",
+      "message_type": "alert"
+    },
+    "timestamp": "2025-08-22T09:59:40.797802"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 232, in broadcast\n    logger.debug(f\"Broadcast message sent to {successful}/{total} connections\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 14
+    },
+    "total_errors_handled": 14
+  },
+  "timestamp": "2025-08-22T09:59:40.798826"
+}
+2025-08-22 09:59:40,802 - botphia.error_handler - CRITICAL - {
+  "error_id": "WebSocketError_20250822_095940",
+  "error_details": {
+    "error_type": "WebSocketError",
+    "error_code": "WebSocketError",
+    "message": "Broadcast failed: name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_broadcast",
+      "message_type": "bot_status"
+    },
+    "timestamp": "2025-08-22T09:59:40.801537"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 232, in broadcast\n    logger.debug(f\"Broadcast message sent to {successful}/{total} connections\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 14,
+      "WebSocketError": 1
+    },
+    "total_errors_handled": 15
+  },
+  "timestamp": "2025-08-22T09:59:40.802535"
+}
+2025-08-22 09:59:45,599 - botphia.error_handler - CRITICAL - {
+  "error_id": "WebSocketError_20250822_095945",
+  "error_details": {
+    "error_type": "WebSocketError",
+    "error_code": "WebSocketError",
+    "message": "Broadcast failed: name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_broadcast",
+      "message_type": "update"
+    },
+    "timestamp": "2025-08-22T09:59:45.598195"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 232, in broadcast\n    logger.debug(f\"Broadcast message sent to {successful}/{total} connections\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 14,
+      "WebSocketError": 2
+    },
+    "total_errors_handled": 16
+  },
+  "timestamp": "2025-08-22T09:59:45.599865"
+}
+2025-08-22 09:59:45,618 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095945",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:45.616691"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 14,
+      "WebSocketError": 3
+    },
+    "total_errors_handled": 17
+  },
+  "timestamp": "2025-08-22T09:59:45.618321"
+}
+2025-08-22 09:59:45,620 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095945",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:45.618577"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 15,
+      "WebSocketError": 3
+    },
+    "total_errors_handled": 18
+  },
+  "timestamp": "2025-08-22T09:59:45.619948"
+}
+2025-08-22 09:59:50,644 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095950",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:50.641484"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 16,
+      "WebSocketError": 3
+    },
+    "total_errors_handled": 19
+  },
+  "timestamp": "2025-08-22T09:59:50.644202"
+}
+2025-08-22 09:59:50,648 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_095950",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T09:59:50.645998"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 17,
+      "WebSocketError": 3
+    },
+    "total_errors_handled": 20
+  },
+  "timestamp": "2025-08-22T09:59:50.648323"
+}
+2025-08-22 09:59:59,881 - botphia.error_handler - CRITICAL - {
+  "error_id": "WebSocketError_20250822_095959",
+  "error_details": {
+    "error_type": "WebSocketError",
+    "error_code": "WebSocketError",
+    "message": "Broadcast failed: name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_broadcast",
+      "message_type": "update"
+    },
+    "timestamp": "2025-08-22T09:59:59.879731"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 232, in broadcast\n    logger.debug(f\"Broadcast message sent to {successful}/{total} connections\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 18,
+      "WebSocketError": 3
+    },
+    "total_errors_handled": 21
+  },
+  "timestamp": "2025-08-22T09:59:59.881438"
+}
+2025-08-22 10:00:02,902 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100002",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:02.900620"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 18,
+      "WebSocketError": 4
+    },
+    "total_errors_handled": 22
+  },
+  "timestamp": "2025-08-22T10:00:02.902299"
+}
+2025-08-22 10:00:02,904 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100002",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:02.902547"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 19,
+      "WebSocketError": 4
+    },
+    "total_errors_handled": 23
+  },
+  "timestamp": "2025-08-22T10:00:02.904016"
+}
+2025-08-22 10:00:07,936 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100007",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:07.935444"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 20,
+      "WebSocketError": 4
+    },
+    "total_errors_handled": 24
+  },
+  "timestamp": "2025-08-22T10:00:07.936895"
+}
+2025-08-22 10:00:07,938 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100007",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:07.937143"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 21,
+      "WebSocketError": 4
+    },
+    "total_errors_handled": 25
+  },
+  "timestamp": "2025-08-22T10:00:07.938458"
+}
+2025-08-22 10:00:13,966 - botphia.error_handler - CRITICAL - {
+  "error_id": "WebSocketError_20250822_100013",
+  "error_details": {
+    "error_type": "WebSocketError",
+    "error_code": "WebSocketError",
+    "message": "Broadcast failed: name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_broadcast",
+      "message_type": "update"
+    },
+    "timestamp": "2025-08-22T10:00:13.965353"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 232, in broadcast\n    logger.debug(f\"Broadcast message sent to {successful}/{total} connections\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 22,
+      "WebSocketError": 4
+    },
+    "total_errors_handled": 26
+  },
+  "timestamp": "2025-08-22T10:00:13.966384"
+}
+2025-08-22 10:00:13,982 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100013",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:13.981268"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 22,
+      "WebSocketError": 5
+    },
+    "total_errors_handled": 27
+  },
+  "timestamp": "2025-08-22T10:00:13.982293"
+}
+2025-08-22 10:00:15,614 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100015",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:15.613620"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 23,
+      "WebSocketError": 5
+    },
+    "total_errors_handled": 28
+  },
+  "timestamp": "2025-08-22T10:00:15.614791"
+}
+2025-08-22 10:00:20,637 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100020",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:20.635629"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 24,
+      "WebSocketError": 5
+    },
+    "total_errors_handled": 29
+  },
+  "timestamp": "2025-08-22T10:00:20.637695"
+}
+2025-08-22 10:00:20,641 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100020",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:20.638111"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 25,
+      "WebSocketError": 5
+    },
+    "total_errors_handled": 30
+  },
+  "timestamp": "2025-08-22T10:00:20.641191"
+}
+2025-08-22 10:00:28,278 - botphia.error_handler - CRITICAL - {
+  "error_id": "WebSocketError_20250822_100028",
+  "error_details": {
+    "error_type": "WebSocketError",
+    "error_code": "WebSocketError",
+    "message": "Broadcast failed: name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_broadcast",
+      "message_type": "update"
+    },
+    "timestamp": "2025-08-22T10:00:28.276213"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 232, in broadcast\n    logger.debug(f\"Broadcast message sent to {successful}/{total} connections\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 26,
+      "WebSocketError": 5
+    },
+    "total_errors_handled": 31
+  },
+  "timestamp": "2025-08-22T10:00:28.277954"
+}
+2025-08-22 10:00:28,299 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100028",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:28.298006"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 26,
+      "WebSocketError": 6
+    },
+    "total_errors_handled": 32
+  },
+  "timestamp": "2025-08-22T10:00:28.299687"
+}
+2025-08-22 10:00:28,301 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100028",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:28.299924"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 27,
+      "WebSocketError": 6
+    },
+    "total_errors_handled": 33
+  },
+  "timestamp": "2025-08-22T10:00:28.301564"
+}
+2025-08-22 10:00:33,339 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100033",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:33.336876"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 28,
+      "WebSocketError": 6
+    },
+    "total_errors_handled": 34
+  },
+  "timestamp": "2025-08-22T10:00:33.339427"
+}
+2025-08-22 10:00:33,342 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100033",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:33.339903"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 29,
+      "WebSocketError": 6
+    },
+    "total_errors_handled": 35
+  },
+  "timestamp": "2025-08-22T10:00:33.341922"
+}
+2025-08-22 10:00:42,497 - botphia.error_handler - CRITICAL - {
+  "error_id": "WebSocketError_20250822_100042",
+  "error_details": {
+    "error_type": "WebSocketError",
+    "error_code": "WebSocketError",
+    "message": "Broadcast failed: name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_broadcast",
+      "message_type": "update"
+    },
+    "timestamp": "2025-08-22T10:00:42.495551"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 232, in broadcast\n    logger.debug(f\"Broadcast message sent to {successful}/{total} connections\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 30,
+      "WebSocketError": 6
+    },
+    "total_errors_handled": 36
+  },
+  "timestamp": "2025-08-22T10:00:42.497221"
+}
+2025-08-22 10:00:42,519 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100042",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:42.517148"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 30,
+      "WebSocketError": 7
+    },
+    "total_errors_handled": 37
+  },
+  "timestamp": "2025-08-22T10:00:42.518779"
+}
+2025-08-22 10:00:42,521 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100042",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:42.519393"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 31,
+      "WebSocketError": 7
+    },
+    "total_errors_handled": 38
+  },
+  "timestamp": "2025-08-22T10:00:42.521043"
+}
+2025-08-22 10:00:47,551 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100047",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:47.549424"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 32,
+      "WebSocketError": 7
+    },
+    "total_errors_handled": 39
+  },
+  "timestamp": "2025-08-22T10:00:47.550956"
+}
+2025-08-22 10:00:47,552 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100047",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:47.551194"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 33,
+      "WebSocketError": 7
+    },
+    "total_errors_handled": 40
+  },
+  "timestamp": "2025-08-22T10:00:47.552325"
+}
+2025-08-22 10:00:57,915 - botphia.error_handler - CRITICAL - {
+  "error_id": "WebSocketError_20250822_100057",
+  "error_details": {
+    "error_type": "WebSocketError",
+    "error_code": "WebSocketError",
+    "message": "Broadcast failed: name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_broadcast",
+      "message_type": "update"
+    },
+    "timestamp": "2025-08-22T10:00:57.914429"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 232, in broadcast\n    logger.debug(f\"Broadcast message sent to {successful}/{total} connections\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 34,
+      "WebSocketError": 7
+    },
+    "total_errors_handled": 41
+  },
+  "timestamp": "2025-08-22T10:00:57.915580"
+}
+2025-08-22 10:00:57,932 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100057",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:57.931390"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 34,
+      "WebSocketError": 8
+    },
+    "total_errors_handled": 42
+  },
+  "timestamp": "2025-08-22T10:00:57.932374"
+}
+2025-08-22 10:00:57,933 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100057",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:00:57.932505"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 35,
+      "WebSocketError": 8
+    },
+    "total_errors_handled": 43
+  },
+  "timestamp": "2025-08-22T10:00:57.933648"
+}
+2025-08-22 10:01:02,953 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100102",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:01:02.951348"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 36,
+      "WebSocketError": 8
+    },
+    "total_errors_handled": 44
+  },
+  "timestamp": "2025-08-22T10:01:02.953310"
+}
+2025-08-22 10:01:02,955 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100102",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:01:02.953594"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 37,
+      "WebSocketError": 8
+    },
+    "total_errors_handled": 45
+  },
+  "timestamp": "2025-08-22T10:01:02.955350"
+}
+2025-08-22 10:01:12,063 - botphia.error_handler - CRITICAL - {
+  "error_id": "WebSocketError_20250822_100112",
+  "error_details": {
+    "error_type": "WebSocketError",
+    "error_code": "WebSocketError",
+    "message": "Broadcast failed: name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_broadcast",
+      "message_type": "update"
+    },
+    "timestamp": "2025-08-22T10:01:12.062033"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 232, in broadcast\n    logger.debug(f\"Broadcast message sent to {successful}/{total} connections\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 38,
+      "WebSocketError": 8
+    },
+    "total_errors_handled": 46
+  },
+  "timestamp": "2025-08-22T10:01:12.063281"
+}
+2025-08-22 10:01:12,084 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100112",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_connect",
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:01:12.082014"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 38,
+      "WebSocketError": 9
+    },
+    "total_errors_handled": 47
+  },
+  "timestamp": "2025-08-22T10:01:12.084196"
+}
+2025-08-22 10:01:12,088 - botphia.error_handler - CRITICAL - {
+  "error_id": "BotPhiaError_20250822_100112",
+  "error_details": {
+    "error_type": "BotPhiaError",
+    "error_code": "BotPhiaError",
+    "message": "name 'logger' is not defined",
+    "context": {
+      "operation": "websocket_endpoint",
+      "connection_id": null,
+      "user_id": null
+    },
+    "timestamp": "2025-08-22T10:01:12.084648"
+  },
+  "severity": "critical",
+  "stack_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 2067, in websocket_endpoint\n    connection_id = await trading_manager.connect_websocket(websocket, user_id)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+    "  File \"/Users/ja/saby/trading_api/fastapi_server.py\", line 181, in connect_websocket\n    logger.info(f\"WebSocket client connected: {connection_id}\")\n    ^^^^^^\n",
+    "NameError: name 'logger' is not defined\n"
+  ],
+  "recovery_suggestion": "Immediate attention required - system may be unstable",
+  "system_info": {
+    "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:19) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "darwin",
+    "error_stats": {
+      "BotPhiaError": 39,
+      "WebSocketError": 9
+    },
+    "total_errors_handled": 48
+  },
+  "timestamp": "2025-08-22T10:01:12.088102"
+}

@@ -1,0 +1,100 @@
+{
+  "total": {
+    "analyses_count": 2484,
+    "signals_generated": 242,
+    "data_points_processed": 1192800,
+    "symbols_tracked": 11,
+    "high_quality_signals": 0,
+    "start_date": "2025-08-21T17:38:39.410290"
+  },
+  "session": {
+    "start_time": "2025-09-08T13:29:59.109358",
+    "analyses_count": 625,
+    "signals_generated": 41,
+    "data_points_processed": 283800
+  },
+  "last_24h": {
+    "analyses_count": 2484,
+    "signals_generated": 242,
+    "data_points_processed": 1192800
+  },
+  "philosophers": {
+    "socrates": {
+      "analyses": 82,
+      "signals": 24,
+      "last_active": "2025-09-08T14:15:56.069134"
+    },
+    "plato": {
+      "analyses": 0,
+      "signals": 0,
+      "last_active": null
+    },
+    "aristotle": {
+      "analyses": 0,
+      "signals": 0,
+      "last_active": null
+    },
+    "sun_tzu": {
+      "analyses": 0,
+      "signals": 0,
+      "last_active": null
+    },
+    "confucius": {
+      "analyses": 0,
+      "signals": 0,
+      "last_active": null
+    },
+    "nietzsche": {
+      "analyses": 0,
+      "signals": 0,
+      "last_active": null
+    }
+  },
+  "symbols_analysis": {
+    "BTCUSDT": {
+      "analyses": 348,
+      "last_analysis": "2025-09-08T14:15:51.492178"
+    },
+    "ETHUSDT": {
+      "analyses": 347,
+      "last_analysis": "2025-09-08T14:15:51.716442"
+    },
+    "BNBUSDT": {
+      "analyses": 345,
+      "last_analysis": "2025-09-08T14:15:53.535216"
+    },
+    "MATICUSDT": {
+      "analyses": 345,
+      "last_analysis": "2025-09-08T14:15:55.070007"
+    },
+    "UNIUSDT": {
+      "analyses": 345,
+      "last_analysis": "2025-09-08T14:15:55.289665"
+    },
+    "ADAUSDT": {
+      "analyses": 43,
+      "last_analysis": "2025-09-08T14:15:53.755048"
+    },
+    "SOLUSDT": {
+      "analyses": 43,
+      "last_analysis": "2025-09-08T14:15:53.974534"
+    },
+    "XRPUSDT": {
+      "analyses": 43,
+      "last_analysis": "2025-09-08T14:15:54.195400"
+    },
+    "DOTUSDT": {
+      "analyses": 43,
+      "last_analysis": "2025-09-08T14:15:54.416882"
+    },
+    "LINKUSDT": {
+      "analyses": 43,
+      "last_analysis": "2025-09-08T14:15:54.634751"
+    },
+    "AVAXUSDT": {
+      "analyses": 43,
+      "last_analysis": "2025-09-08T14:15:54.851864"
+    }
+  },
+  "last_update": "2025-09-08T14:15:56.069143"
+}

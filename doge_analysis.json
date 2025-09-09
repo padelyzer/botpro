@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-09-07T22:04:40.480614",
+  "price": 0.23082,
+  "recommendation": "BUY",
+  "score": 3,
+  "entry": 0.23105081999999996,
+  "stop_loss": 0.21566625,
+  "targets": [
+    0.2354364,
+    0.2388987,
+    0.23102905
+  ],
+  "position_size": 1501.8347604125472,
+  "bullish_signals": [
+    "\u2705 MOMENTUM FUERTE: +6.6% en 24h",
+    "\u2705 No est\u00e1 sobreextendido (<10%), hay espacio para subir",
+    "\u2705 VOLUMEN ALTO: $284M indica inter\u00e9s institucional",
+    "\u2705 Rompiendo resistencias (78% del rango)"
+  ],
+  "bearish_signals": [
+    "\u26a0\ufe0f RSI 1H alto (71): posible sobrecompra temporal"
+  ]
+}

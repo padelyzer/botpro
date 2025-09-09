@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Enhanced Trading Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            background: linear-gradient(45deg, #00ff88, #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .connection-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            margin-top: 5px;
+        }
+
+        .connected {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .disconnected {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .coin-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .coin-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff88;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .coin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .coin-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .coin-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .current-price {
+            text-align: right;
+        }
+
+        .price-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .price-change {
+            font-size: 0.7rem;
+            margin-top: 2px;
+        }
+
+        .positive {
+            color: #00ff88;
+        }
+
+        .negative {
+            color: #ff4444;
+        }
+
+        /* Trend Indicator */
+        .trend-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 8px;
+            margin: 6px 0;
+        }
+
+        .trend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .trend-direction {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .trend-arrow {
+            font-size: 1.1rem;
+            animation: pulse 2s infinite;
+        }
+
+        .trend-up {
+            color: #00ff88;
+        }
+
+        .trend-down {
+            color: #ff4444;
+        }
+
+        .trend-neutral {
+            color: #ffaa00;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .trend-strength {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .strength-bar {
+            width: 60px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ffaa00, #00ff88);
+            transition: width 0.3s ease;
+        }
+
+        .trend-timeframes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-top: 5px;
+        }
+
+        .tf-badge {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 4px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.65rem;
+        }
+
+        .tf-up {
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .tf-down {
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+
+        /* Bot Signals */
+        .bot-signals {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 8px;
+            margin: 6px 0;
+        }
+
+        .bot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .bot-title {
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .bot-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        .bot-active {
+            background: #00ff88;
+        }
+
+        .bot-inactive {
+            background: #666;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .signal-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            margin-right: 5px;
+        }
+
+        .signal-long {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: #000;
+        }
+
+        .signal-short {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            color: #fff;
+        }
+
+        .signal-neutral {
+            background: rgba(255, 255, 255, 0.1);
+            color: #999;
+        }
+
+        .bot-confidence {
+            font-size: 0.65rem;
+            color: #aaa;
+            margin-top: 3px;
+        }
+
+        /* Liquidity Sections */
+        .liquidity-section {
+            margin: 6px 0;
+        }
+
+        .section-title {
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .liquidity-zone {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            padding: 5px 8px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+        }
+
+        .zone-price {
+            font-weight: bold;
+        }
+
+        .zone-liquidity {
+            color: #00aaff;
+        }
+
+        .imbalance-bar {
+            background: linear-gradient(90deg, #ff4444 0%, #666 50%, #00ff88 100%);
+            height: 14px;
+            border-radius: 7px;
+            position: relative;
+            margin: 6px 0;
+        }
+
+        .imbalance-indicator {
+            position: absolute;
+            top: -4px;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            border: 2px solid #00aaff;
+            transition: left 0.3s ease;
+        }
+
+        .imbalance-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            margin-top: 3px;
+        }
+
+        /* Alert Banner */
+        .alert-banner {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            color: #000;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Global Market Status -->
+        <div id="market-status" style="
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        ">
+            <div style="text-align: center;">
+                <h2 style="font-size: 1.2rem; margin-bottom: 10px;">Loading Market Status...</h2>
+            </div>
+        </div>
+
+        <div class="dashboard" id="dashboard">
+            <!-- Cards will be inserted here -->
+        </div>
+    </div>
+
+    <div class="alert-banner" id="alert-banner"></div>
+
+    <script>
+        // Configuration
+        const LIQUIDITY_API = 'http://localhost:8003';
+        const UNIFIED_API = 'http://localhost:8004';
+        const UPDATE_INTERVAL = 5000; // 5 seconds
+        const SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT'];
+        
+        let updateTimer = null;
+        let lastSignals = {};
+
+        // Format large numbers
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(2) + 'M';
+            }
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toFixed(2);
+        }
+
+        // Format price
+        function formatPrice(price, symbol) {
+            if (symbol.includes('BTC')) {
+                return price.toFixed(0);
+            }
+            return price.toFixed(2);
+        }
+
+        // Show alert
+        function showAlert(message) {
+            const banner = document.getElementById('alert-banner');
+            banner.textContent = message;
+            banner.style.display = 'block';
+            
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 5000);
+        }
+
+        // Create trend section HTML
+        function createTrendSection(trend) {
+            if (!trend || !trend.overall) return '';
+            
+            const direction = trend.overall.direction;
+            const strength = trend.overall.strength || 0;
+            const confidence = trend.overall.confidence || 0;
+            
+            let arrow = '→';
+            let arrowClass = 'trend-neutral';
+            let description = 'Neutral';
+            
+            if (direction === 'UPTREND') {
+                arrow = '↑';
+                arrowClass = 'trend-up';
+                description = 'Bullish Trend';
+            } else if (direction === 'DOWNTREND') {
+                arrow = '↓';
+                arrowClass = 'trend-down';
+                description = 'Bearish Trend';
+            }
+            
+            // Timeframe badges
+            let tfBadges = '';
+            if (trend.timeframes) {
+                for (const [tf, data] of Object.entries(trend.timeframes)) {
+                    const tfClass = data.direction === 'UPTREND' ? 'tf-up' : 'tf-down';
+                    const tfArrow = data.direction === 'UPTREND' ? '↑' : '↓';
+                    tfBadges += `
+                        <div class="tf-badge ${tfClass}">
+                            ${tf} ${tfArrow} ${data.momentum.toFixed(1)}%
+                        </div>
+                    `;
+                }
+            }
+            
+            return `
+                <div class="trend-section">
+                    <div class="trend-header">
+                        <div class="trend-direction">
+                            <span class="trend-arrow ${arrowClass}">${arrow}</span>
+                            <span>${description}</span>
+                        </div>
+                        <div class="trend-strength">
+                            <span style="font-size: 0.8rem;">Strength</span>
+                            <div class="strength-bar">
+                                <div class="strength-fill" style="width: ${strength}%"></div>
+                            </div>
+                            <span style="font-size: 0.8rem;">${strength.toFixed(0)}%</span>
+                        </div>
+                    </div>
+                    ${tfBadges ? `<div class="trend-timeframes">${tfBadges}</div>` : ''}
+                </div>
+            `;
+        }
+
+        // Create bot signals section with entry points
+        function createBotSignalsSection(botSignals, symbol) {
+            if (!botSignals) return '';
+            
+            const isActive = botSignals.active || false;
+            const signalType = botSignals.type || 'NONE';
+            const confidence = botSignals.confidence || 0;
+            const sources = botSignals.sources || [];
+            const entry = botSignals.entry || 0;
+            const target = botSignals.target || 0;
+            const stopLoss = botSignals.stopLoss || 0;
+            
+            let signalBadge = '<span class="signal-badge signal-neutral">NO SIGNAL</span>';
+            if (signalType === 'LONG') {
+                signalBadge = '<span class="signal-badge signal-long">🟢 LONG</span>';
+            } else if (signalType === 'SHORT') {
+                signalBadge = '<span class="signal-badge signal-short">🔴 SHORT</span>';
+            }
+            
+            return `
+                <div class="bot-signals">
+                    <div class="bot-header">
+                        <div class="bot-title">
+                            <span class="bot-status ${isActive ? 'bot-active' : 'bot-inactive'}"></span>
+                            Bot Signals
+                        </div>
+                        ${signalBadge}
+                    </div>
+                    ${confidence > 0 && entry > 0 ? `
+                        <div style="margin-top: 8px; padding: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 6px;">
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 0.8rem;">
+                                <div>
+                                    <div style="color: #888;">Entry</div>
+                                    <div style="color: #fff; font-weight: bold;">$${formatPrice(entry, symbol)}</div>
+                                </div>
+                                <div>
+                                    <div style="color: #888;">Target</div>
+                                    <div style="color: #00ff88; font-weight: bold;">$${formatPrice(target, symbol)}</div>
+                                </div>
+                                <div>
+                                    <div style="color: #888;">Stop</div>
+                                    <div style="color: #ff4444; font-weight: bold;">$${formatPrice(stopLoss, symbol)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bot-confidence" style="margin-top: 5px;">
+                            Confidence: ${confidence.toFixed(0)}% | 
+                            Sources: ${sources.length > 0 ? sources.join(', ') : 'None'}
+                        </div>
+                    ` : confidence > 0 ? `
+                        <div class="bot-confidence">
+                            Confidence: ${confidence.toFixed(0)}% | 
+                            Waiting for better entry...
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Create coin card HTML
+        async function createCoinCard(symbol) {
+            try {
+                // Fetch both liquidity and unified data
+                const [liquidityResponse, unifiedResponse] = await Promise.all([
+                    fetch(`${LIQUIDITY_API}/api/liquidity/${symbol}`),
+                    fetch(`${UNIFIED_API}/api/unified/${symbol}`)
+                ]);
+                
+                const liquidityData = await liquidityResponse.json();
+                const unifiedData = await unifiedResponse.json();
+                
+                const coinName = symbol.replace('USDT', '');
+                const price = liquidityData.price || 0;
+                const change24h = liquidityData.change24h || 0;
+                const changeColor = change24h >= 0 ? 'positive' : 'negative';
+                const changeSymbol = change24h >= 0 ? '↑' : '↓';
+                
+                // Imbalance
+                const imbalance = liquidityData.imbalance || 0;
+                const imbalancePosition = 50 + (imbalance / 2); // Convert to 0-100 scale
+                
+                // Liquidity zones
+                const supportZones = (liquidityData.liquidityZones?.support || [])
+                    .sort((a, b) => b.liquidity - a.liquidity)
+                    .slice(0, 2);
+                const resistanceZones = (liquidityData.liquidityZones?.resistance || [])
+                    .sort((a, b) => b.liquidity - a.liquidity)
+                    .slice(0, 2);
+                
+                // Check for new signals
+                if (liquidityData.signal && JSON.stringify(liquidityData.signal) !== JSON.stringify(lastSignals[symbol])) {
+                    showAlert(`🚨 ${coinName}: ${liquidityData.signal.type} Signal - ${liquidityData.signal.reason}`);
+                    lastSignals[symbol] = liquidityData.signal;
+                }
+                
+                return `
+                    <div class="coin-card">
+                        <div class="coin-header">
+                            <div class="coin-name">
+                                <span class="coin-icon">${coinName[0]}</span>
+                                ${coinName}
+                            </div>
+                            <div class="current-price">
+                                <div class="price-value">$${formatPrice(price, symbol)}</div>
+                                <div class="price-change ${changeColor}">
+                                    ${changeSymbol} ${Math.abs(change24h).toFixed(2)}%
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${createTrendSection(unifiedData.trend)}
+                        ${createBotSignalsSection(unifiedData.botSignals, symbol)}
+                        
+                        <div class="liquidity-section">
+                            <div class="section-title">
+                                💧 Order Book Imbalance
+                            </div>
+                            <div class="imbalance-bar">
+                                <div class="imbalance-indicator" style="left: ${imbalancePosition}%"></div>
+                            </div>
+                            <div class="imbalance-labels">
+                                <span style="color: #ff4444">Sellers ${Math.abs(Math.min(imbalance, 0)).toFixed(1)}%</span>
+                                <span style="color: #00ff88">Buyers ${Math.max(imbalance, 0).toFixed(1)}%</span>
+                            </div>
+                        </div>
+                        
+                        ${supportZones.length > 0 ? `
+                            <div class="liquidity-section">
+                                <div class="section-title">🛡️ Support Zones</div>
+                                ${supportZones.map(zone => `
+                                    <div class="liquidity-zone">
+                                        <span class="zone-price">$${formatPrice(zone.price, symbol)}</span>
+                                        <span class="zone-liquidity">$${formatNumber(zone.liquidity)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${resistanceZones.length > 0 ? `
+                            <div class="liquidity-section">
+                                <div class="section-title">🚧 Resistance Zones</div>
+                                ${resistanceZones.map(zone => `
+                                    <div class="liquidity-zone">
+                                        <span class="zone-price">$${formatPrice(zone.price, symbol)}</span>
+                                        <span class="zone-liquidity">$${formatNumber(zone.liquidity)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } catch (error) {
+                console.error(`Error creating card for ${symbol}:`, error);
+                return `
+                    <div class="coin-card">
+                        <div class="coin-header">
+                            <div class="coin-name">${symbol.replace('USDT', '')}</div>
+                        </div>
+                        <p style="color: #ff4444; text-align: center; margin: 20px 0;">
+                            Failed to load data
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Update market status
+        async function updateMarketStatus(isConnected = false) {
+            try {
+                const response = await fetch(`${UNIFIED_API}/api/market/status`);
+                const data = await response.json();
+                
+                const marketStatusEl = document.getElementById('market-status');
+                
+                let statusColor = '#666';
+                if (data.marketStatus.includes('BULLISH')) {
+                    statusColor = '#00ff88';
+                } else if (data.marketStatus.includes('BEARISH')) {
+                    statusColor = '#ff4444';
+                }
+                
+                const connectionStatus = isConnected ? 
+                    '<span style="background: #00ff88; color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">🟢 Connected</span>' : 
+                    '<span style="background: #ff4444; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">🔴 Disconnected</span>';
+                
+                const lastUpdate = new Date().toLocaleTimeString();
+                
+                marketStatusEl.innerHTML = `
+                    <div style="position: relative;">
+                        <div style="position: absolute; top: 0; left: 0; display: flex; align-items: center; gap: 10px;">
+                            ${connectionStatus}
+                            <span style="font-size: 0.65rem; color: #888;">Updated: ${lastUpdate}</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <h2 style="font-size: 1.2rem; margin-bottom: 8px; color: ${statusColor};">
+                                ${data.statusEmoji} Market Status: ${data.marketStatus.replace('_', ' ')}
+                            </h2>
+                            <p style="font-size: 0.75rem; margin-bottom: 10px; color: #aaa;">
+                                ${data.recommendation}
+                            </p>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 500px; margin: 0 auto;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.65rem; color: #888; margin-bottom: 3px;">Fear & Greed</div>
+                                    <div style="font-size: 1rem; font-weight: bold; color: ${data.fearGreedIndex.value < 30 ? '#ff4444' : data.fearGreedIndex.value > 70 ? '#00ff88' : '#ffaa00'};">
+                                        ${data.fearGreedIndex.value}/100
+                                    </div>
+                                    <div style="font-size: 0.6rem; color: #888;">${data.fearGreedIndex.label}</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.65rem; color: #888; margin-bottom: 3px;">Market Direction</div>
+                                    <div style="display: flex; justify-content: center; gap: 5px;">
+                                        <span style="color: #00ff88; font-size: 0.7rem;">🟢 ${data.metrics.bullishCount}</span>
+                                        <span style="color: #ffaa00; font-size: 0.7rem;">🟡 ${data.metrics.neutralCount}</span>
+                                        <span style="color: #ff4444; font-size: 0.7rem;">🔴 ${data.metrics.bearishCount}</span>
+                                    </div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.65rem; color: #888; margin-bottom: 3px;">Avg Strength</div>
+                                    <div style="font-size: 1rem; font-weight: bold;">
+                                        ${data.metrics.averageStrength.toFixed(1)}%
+                                    </div>
+                                    <div style="font-size: 0.6rem; color: ${data.metrics.averageMomentum > 0 ? '#00ff88' : '#ff4444'};">
+                                        ${data.metrics.averageMomentum > 0 ? '↑' : '↓'} ${Math.abs(data.metrics.averageMomentum).toFixed(2)}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error updating market status:', error);
+                const marketStatusEl = document.getElementById('market-status');
+                marketStatusEl.innerHTML = `
+                    <div style="position: relative;">
+                        <div style="position: absolute; top: 0; left: 0;">
+                            <span style="background: #ff4444; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">🔴 Disconnected</span>
+                        </div>
+                        <div style="text-align: center; color: #ff4444;">
+                            <h2 style="font-size: 1rem;">Unable to fetch market status</h2>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Update dashboard
+        async function updateDashboard() {
+            const dashboard = document.getElementById('dashboard');
+            
+            try {
+                // Create cards for all symbols
+                const cardPromises = SYMBOLS.map(symbol => createCoinCard(symbol));
+                const cards = await Promise.all(cardPromises);
+                
+                dashboard.innerHTML = cards.join('');
+                
+                // Update market status with connection status
+                await updateMarketStatus(true);
+                
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+                // Update market status showing disconnected
+                await updateMarketStatus(false);
+            }
+        }
+
+        // Start updates
+        function startUpdates() {
+            updateDashboard();
+            updateTimer = setInterval(updateDashboard, UPDATE_INTERVAL);
+        }
+
+        // Stop updates
+        function stopUpdates() {
+            if (updateTimer) {
+                clearInterval(updateTimer);
+                updateTimer = null;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            startUpdates();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            stopUpdates();
+        });
+    </script>
+</body>
+</html>

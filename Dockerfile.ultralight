@@ -1,0 +1,37 @@
+FROM python:3.11-alpine
+
+# Variables de entorno para optimización máxima
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /app
+
+# Instalar solo curl para health check
+RUN apk add --no-cache curl
+
+# Copiar y instalar requirements mínimos
+COPY requirements_lightweight.txt .
+RUN pip install --no-cache-dir -r requirements_lightweight.txt
+
+# Copiar solo el servidor optimizado
+COPY fastapi_server_lightweight.py .
+
+# Crear directorios necesarios
+RUN mkdir -p /app/data
+
+# Variables de entorno por defecto
+ENV PORT=8000 \
+    TRADING_MODE=demo \
+    DATABASE_PATH=/app/data/trading_bot.db
+
+# Exponer puerto
+EXPOSE 8000
+
+# Health check simple
+HEALTHCHECK --interval=60s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Ejecutar directamente FastAPI sin supervisor
+CMD ["python", "fastapi_server_lightweight.py"]
