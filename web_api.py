@@ -19,6 +19,7 @@ from pathlib import Path
 # Importar nuestros módulos del sistema de trading
 try:
     from enhanced_signal_detector import EnhancedPatternDetector
+    from telegram_notifier import create_telegram_notifier
     # Crear funciones auxiliares para compatibilidad
     def get_enhanced_signals_data():
         # Datos de ejemplo con el sistema enriquecido RSI 73/28
@@ -141,6 +142,13 @@ class SignalState:
 
 signal_state = SignalState()
 
+# Inicializar notificador de Telegram
+telegram_notifier = create_telegram_notifier()
+if telegram_notifier:
+    logger.info("✅ Telegram notifier initialized")
+else:
+    logger.warning("⚠️ Telegram notifier not configured")
+
 @app.on_event("startup")
 async def startup_event():
     """Inicializar el sistema al arrancar"""
@@ -150,6 +158,10 @@ async def startup_event():
     # Crear directorio para archivos estáticos si no existe
     static_dir = Path("static")
     static_dir.mkdir(exist_ok=True)
+    
+    # Enviar notificación de startup a Telegram
+    if telegram_notifier:
+        await telegram_notifier.send_status_update("🚀 BotphIA Web API iniciado correctamente")
     
     logger.info("✅ Sistema iniciado correctamente")
 
@@ -284,6 +296,42 @@ async def get_system_stats():
     except Exception as e:
         logger.error(f"Error obteniendo estadísticas: {e}")
         return {"error": str(e)}
+
+# =================== TELEGRAM ENDPOINTS ===================
+
+@app.post("/api/signals/send-telegram")
+async def send_signal_to_telegram(signal_data: dict):
+    """Enviar señal específica a Telegram"""
+    if not telegram_notifier:
+        raise HTTPException(status_code=503, detail="Telegram not configured")
+    
+    try:
+        success = await telegram_notifier.send_signal(signal_data)
+        return {
+            "status": "success" if success else "failed",
+            "message": "Signal sent to Telegram" if success else "Failed to send signal",
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error sending to Telegram: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/telegram/test")
+async def test_telegram_connection():
+    """Test conexión con Telegram"""
+    if not telegram_notifier:
+        raise HTTPException(status_code=503, detail="Telegram not configured")
+    
+    try:
+        success = await telegram_notifier.send_status_update("🧪 Test de conexión exitoso")
+        return {
+            "status": "success" if success else "failed", 
+            "message": "Test message sent" if success else "Failed to send test message",
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error testing Telegram: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # =================== WEBSOCKET ===================
 
