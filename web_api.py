@@ -179,6 +179,11 @@ async def root():
         }
     }
 
+@app.get("/health")
+async def health_check():
+    """Health check endpoint para Render"""
+    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+
 @app.get("/api/signals")
 async def get_signals():
     """Obtener señales actuales básicas"""
