@@ -286,6 +286,20 @@ async def get_system_config():
         "last_updated": datetime.now().isoformat()
     }
 
+@app.get("/api/system/files")
+async def check_files():
+    """Verificar archivos disponibles en el sistema"""
+    import os
+    files = {
+        "current_dir": os.getcwd(),
+        "files_in_root": os.listdir("."),
+        "static_exists": os.path.exists("static"),
+        "static_files": os.listdir("static") if os.path.exists("static") else [],
+        "dashboard_exists": os.path.exists("static/dashboard.html"),
+        "pro_dashboard_exists": os.path.exists("static/professional_dashboard.html")
+    }
+    return files
+
 @app.get("/api/stats")
 async def get_system_stats():
     """Obtener estadísticas del sistema"""
