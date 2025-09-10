@@ -174,9 +174,15 @@ async def startup_event():
     static_dir = Path("static")
     static_dir.mkdir(exist_ok=True)
     
+    # Iniciar bot automáticamente
+    bot_state["running"] = True
+    bot_state["start_time"] = datetime.now()
+    bot_state["task"] = asyncio.create_task(run_signal_generator())
+    logger.info("🤖 Bot iniciado automáticamente")
+    
     # Enviar notificación de startup a Telegram
     if telegram_notifier:
-        await telegram_notifier.send_status_update("🚀 BotphIA Web API iniciado correctamente")
+        await telegram_notifier.send_status_update("🚀 BotphIA Web API iniciado correctamente - Bot running")
     
     logger.info("✅ Sistema iniciado correctamente")
 
@@ -187,7 +193,7 @@ async def root():
     """Página de inicio con información del API"""
     return {
         "system": "BotphIA Trading Signals API",
-        "version": "1.0.1",
+        "version": "2.0.0",
         "status": "online",
         "bot_status": "running" if bot_state.get("running", False) else "stopped",
         "signals_generated": bot_state.get("signals_count", 0),
