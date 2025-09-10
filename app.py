@@ -122,7 +122,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="BotphIA Trading Signals API",
     description="Sistema de señales de trading con RSI 73/28, R:R dinámico y apalancamiento adaptativo",
-    version="1.0.0"
+    version="3.0.2"
 )
 
 # Configurar CORS para permitir acceso desde cualquier origen
@@ -195,11 +195,12 @@ async def startup_event():
 async def root():
     """Página de inicio con información del API"""
     return {
-        "system": "BotphIA Trading Signals API",
-        "version": "3.0.1",
+        "system": "BotphIA Trading Signals API v3",
+        "version": "3.0.2",
         "status": "online",
         "bot_status": "running" if bot_state.get("running", False) else "stopped",
         "signals_generated": bot_state.get("signals_count", 0),
+        "last_updated": datetime.now().isoformat(),
         "features": [
             "RSI 73/28 threshold signals",
             "Dynamic R:R ratio (1.8-2.7:1)",
@@ -221,6 +222,15 @@ async def root():
 async def health_check():
     """Health check endpoint para Render"""
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+
+@app.get("/test")
+async def test_endpoint():
+    """Endpoint de prueba para verificar deployment"""
+    return {
+        "message": "Version 3.0.2 is running!",
+        "timestamp": datetime.now().isoformat(),
+        "code_updated": True
+    }
 
 @app.get("/api/signals")
 async def get_signals():
