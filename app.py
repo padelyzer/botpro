@@ -193,7 +193,7 @@ async def root():
     """Página de inicio con información del API"""
     return {
         "system": "BotphIA Trading Signals API",
-        "version": "2.0.0",
+        "version": "2.0.1",
         "status": "online",
         "bot_status": "running" if bot_state.get("running", False) else "stopped",
         "signals_generated": bot_state.get("signals_count", 0),
