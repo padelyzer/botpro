@@ -16,6 +16,9 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Any
 import logging
 from pathlib import Path
+import requests
+import pandas as pd
+import numpy as np
 
 # Importar nuestros módulos del sistema de trading
 try:
@@ -193,7 +196,7 @@ async def root():
     """Página de inicio con información del API"""
     return {
         "system": "BotphIA Trading Signals API",
-        "version": "2.0.1",
+        "version": "3.0.0",
         "status": "online",
         "bot_status": "running" if bot_state.get("running", False) else "stopped",
         "signals_generated": bot_state.get("signals_count", 0),
@@ -238,11 +241,33 @@ async def get_signals():
 
 @app.get("/api/signals/enhanced")
 async def get_enhanced_signals():
-    """Obtener señales enriquecidas con métricas completas"""
+    """Obtener señales reales del mercado"""
     try:
-        # Obtener señales enriquecidas (usando datos de ejemplo)
-        enhanced_data = get_enhanced_signals_data()
+        # Importar el generador de señales real
+        from simple_signal_generator import SimpleSignalGenerator
         
+        # Crear generador y obtener señales
+        generator = SimpleSignalGenerator()
+        real_signals = await generator.generate_signals()
+        
+        # Actualizar contador global
+        bot_state["signals_count"] = len(real_signals)
+        bot_state["current_signals"] = real_signals
+        
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "system_config": {
+                "rsi_overbought": 73,
+                "rsi_oversold": 28,
+                "dynamic_rr": True,
+                "adaptive_leverage": True
+            },
+            "signals": real_signals,
+            "status": "success"
+        }
+    except ImportError:
+        # Fallback a datos de ejemplo si no se puede importar
+        enhanced_data = get_enhanced_signals_data()
         return {
             "timestamp": datetime.now().isoformat(),
             "system_config": {
@@ -255,7 +280,7 @@ async def get_enhanced_signals():
             "status": "success"
         }
     except Exception as e:
-        logger.error(f"Error obteniendo señales enriquecidas: {e}")
+        logger.error(f"Error obteniendo señales: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/pairs")
